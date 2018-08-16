@@ -14,8 +14,9 @@ import com.ufobeaconsdk.callback.OnScanSuccessListener;
 import com.ufobeaconsdk.callback.OnSuccessListener;
 import com.ufobeaconsdk.main.UFOBeaconManager;
 import com.ufobeaconsdk.main.UFODevice;
-     /* created by Anaghesh Muruli (Android team) on 14-08-2018
-      * github repo: Beacons_test                 */
+     /* created by Anaghesh Muruli on 14-08-2018
+      * github repo: Beacons_test
+      * Added dependency from UFO Beacon SDK   */
 
 public class MainActivity extends AppCompatActivity {
     UFOBeaconManager ufoBeaconManager = new UFOBeaconManager(this);
@@ -34,16 +35,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+//Method to setup UIs
  }
  void setupUI(){
         connect = findViewById(R.id.connect);
  }
 
+
  void startScan(){
 //        isBlutoothEnabled();
 //        isLoactonEnabled();
-//     progressDialog.setMessage("Scanning");
-//     progressDialog.show();
+     progressDialog.setMessage("Scanning");
+     progressDialog.show();
 
      Log.e("Method","startScan");
      ufoBeaconManager.startScan(new OnScanSuccessListener()
@@ -52,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
              runOnUiThread(new Runnable() {
                  @Override public void run(){
          Log.e("Inside","onSuccess");
-         connect_beacons(ufodevice);
+         connect_beacons(ufodevice);   //Fetch the data from Beacon
 
          Toast.makeText(MainActivity.this, "Device connected", Toast.LENGTH_SHORT).show();
          progressDialog.dismiss();
@@ -71,9 +74,10 @@ public class MainActivity extends AppCompatActivity {
      }
      );
 }
-void stopScan(){
+    //To be implement stopScan
+    void stopScan(){
 
-  Log.e("Method","stopScan");
+    Log.e("Method","stopScan");
     ufoBeaconManager.stopScan(new OnSuccessListener()
     { @Override public void onSuccess(boolean isStop) { runOnUiThread(new Runnable() { @Override public void run() {
         Toast.makeText(MainActivity.this, "Scan stopped", Toast.LENGTH_SHORT).show();
@@ -125,9 +129,12 @@ void stopScan(){
         } );}
     });
     }
-//    void deviceType(){
-//        if (ufodevice != null && ufodevice.getDeviceType() == UFODeviceType.EDDYSTONE);// its Eddystone model
-//
-//    }
+
+/*  Next phase
+void deviceType(){
+if (ufodevice != null && ufodevice.getDeviceType() == UFODeviceType.EDDYSTONE);// its Eddystone model
+
+}
+*/
 
 }
