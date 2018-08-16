@@ -14,12 +14,11 @@ import com.ufobeaconsdk.callback.OnScanSuccessListener;
 import com.ufobeaconsdk.callback.OnSuccessListener;
 import com.ufobeaconsdk.main.UFOBeaconManager;
 import com.ufobeaconsdk.main.UFODevice;
-/* created by Anaghesh Muruli (Android team) on 14-08-2018
-* github repo: ----               */
+     /* created by Anaghesh Muruli (Android team) on 14-08-2018
+      * github repo: Beacons_test                 */
 
 public class MainActivity extends AppCompatActivity {
     UFOBeaconManager ufoBeaconManager = new UFOBeaconManager(this);
-  //  UFODevice ufodevice = new UFODevice(this);
     private Button connect;
     private ProgressDialog progressDialog;
     @Override
@@ -34,9 +33,6 @@ public class MainActivity extends AppCompatActivity {
                 isLoactonEnabled();
             }
         });
-
-
-
 
  }
  void setupUI(){
@@ -88,7 +84,7 @@ void stopScan(){
                 Toast.makeText(MainActivity.this, "Scan could not be stopped", Toast.LENGTH_SHORT).show();            } }); } });
 
 }
-void isBlutoothEnabled(){
+    void isBlutoothEnabled(){
         Log.e("Method","isbluoothEnabled");
     ufoBeaconManager.isBluetoothEnabled(new OnSuccessListener() { @Override public void onSuccess(boolean isSuccess)
     {
@@ -100,7 +96,7 @@ void isBlutoothEnabled(){
         } });
     }
 
-void isLoactonEnabled(){
+    void isLoactonEnabled(){
         Log.e("Method","isLocationEnabled");
     ufoBeaconManager.isLocationServiceEnabled(new OnSuccessListener()
     { @Override public void onSuccess(boolean isSuccess) {
