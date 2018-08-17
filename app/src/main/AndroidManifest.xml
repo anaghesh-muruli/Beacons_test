@@ -7,10 +7,13 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <uses-feature
         android:name="android.hardware.bluetooth_le"
         android:required="true" />
+
 
     <application
         android:allowBackup="true"
@@ -19,6 +22,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.google.android.gms.vision.DEPENDENCIES"
+            android:value="barcode" />
         <activity android:name=".MainActivity" />
         <activity
             android:name=".Login"
@@ -36,9 +45,11 @@
             android:name=".Navigation_home"
             android:label="@string/title_activity_navigation_home"
             android:theme="@style/AppTheme" />
-        <activity android:name=".Checkin"
-            android:parentActivityName=".Home">
-            </activity>
+        <activity
+            android:name=".Checkin"
+            android:parentActivityName=".Home" />
+        <activity android:name=".ParkCar" />
+        <activity android:name=".ScanQR"></activity>
     </application>
 
 </manifest>
