@@ -1,4 +1,4 @@
-# Beacons_test
+# FA_product_test
 An android app to communicate with Beacon, a bluetooth low energy(BLE) device<br>
 TO-DO:<br>
 0.Welcome/Splash screen <br>
