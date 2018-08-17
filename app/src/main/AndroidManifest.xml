@@ -19,15 +19,26 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity"></activity>
-        <activity android:name=".Login">
+        <activity android:name=".MainActivity" />
+        <activity
+            android:name=".Login"
+            android:theme="@style/NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Home"></activity>
+        <activity
+            android:name=".Home"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".Navigation_home"
+            android:label="@string/title_activity_navigation_home"
+            android:theme="@style/AppTheme" />
+        <activity android:name=".Checkin"
+            android:parentActivityName=".Home">
+            </activity>
     </application>
 
 </manifest>
