@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="anaghesh.beacons_test">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -17,7 +18,9 @@
         android:name="android.hardware.bluetooth_le"
         android:required="true" />
 
+
     <application
+        tools:replace="android:icon"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -74,6 +77,7 @@
             android:name=".Praking"
             android:label="@string/title_activity_praking" />
         <activity android:name=".FindCar"></activity>
+
     </application>
 
 </manifest>

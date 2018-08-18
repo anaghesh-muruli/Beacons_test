@@ -1,10 +1,7 @@
 package anaghesh.beacons_test;
 
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -20,22 +17,18 @@ private Button confirmPark;
         confirmPark.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder builder;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    builder = new AlertDialog.Builder(ParkCar.this, android.R.style.Theme_Material_Dialog_Alert);
-                } else {
-                    builder = new AlertDialog.Builder(ParkCar.this);
-                }
-                builder.setTitle("Parking Successful")
-                        .setMessage("Your vehicle has been parked Successfully")
+                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(ParkCar.this);
+                builder.setTitle("Parking Successful");
+                builder.setIcon(R.mipmap.ic_launcher);
+                builder.setMessage("Your Vehicle has been parked successfully")
+                        .setCancelable(false)
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                startActivity(new Intent(ParkCar.this, Navigation_home.class));
+                            public void onClick(DialogInterface dialog, int id) {
+                                finish();
                             }
-                        })
-
-                        // .setIcon(R.drawable.ic_launcher)
-                        .show();
+                        });
+                android.app.AlertDialog alert = builder.create();
+                alert.show();
             }
         });
     }

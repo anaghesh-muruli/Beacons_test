@@ -29,7 +29,7 @@ public class Checkin extends AppCompatActivity {
         qrScan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(Checkin.this,ScanQR.class));
+            startActivity(new Intent(Checkin.this, ScanQR.class));
             }
         });
     }
@@ -45,4 +45,5 @@ public class Checkin extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
+
 }
