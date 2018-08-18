@@ -22,7 +22,7 @@ public class Navigation_home extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation_home);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setupUI();
         checkin_img.setOnClickListener(new View.OnClickListener() {
@@ -35,6 +35,12 @@ public class Navigation_home extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(Navigation_home.this, ParkCar.class));
+            }
+        });
+        checkout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(Navigation_home.this,Checkout.class));
             }
         });
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);

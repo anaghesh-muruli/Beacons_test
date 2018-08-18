@@ -7,13 +7,15 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+
     <uses-feature android:name="android.hardware.camera" />
+
     <uses-permission android:name="android.permission.CAMERA" />
 
     <uses-feature
         android:name="android.hardware.bluetooth_le"
         android:required="true" />
-
 
     <application
         android:allowBackup="true"
@@ -28,6 +30,7 @@
         <meta-data
             android:name="com.google.android.gms.vision.DEPENDENCIES"
             android:value="barcode" />
+
         <activity android:name=".MainActivity" />
         <activity
             android:name=".Login"
@@ -49,7 +52,27 @@
             android:name=".Checkin"
             android:parentActivityName=".Home" />
         <activity android:name=".ParkCar" />
-        <activity android:name=".ScanQR"></activity>
+        <activity
+            android:name=".ScanQR"
+            android:parentActivityName=".Checkin" />
+        <activity
+            android:name=".Checkout"
+            android:parentActivityName=".Home" />
+        <!--
+             The API key for Google Maps-based APIs is defined as a string resource.
+             (See the file "res/values/google_maps_api.xml").
+             Note that the API key is linked to the encryption key used to sign the APK.
+             You need a different API key for each encryption key, including the release key that is used to
+             sign the APK for publishing.
+             You can define the keys for the debug and release targets in src/debug/ and src/release/. 
+        -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
+
+        <activity
+            android:name=".Praking"
+            android:label="@string/title_activity_praking"></activity>
     </application>
 
 </manifest>
