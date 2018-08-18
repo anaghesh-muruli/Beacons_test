@@ -72,7 +72,8 @@
 
         <activity
             android:name=".Praking"
-            android:label="@string/title_activity_praking"></activity>
+            android:label="@string/title_activity_praking" />
+        <activity android:name=".FindCar"></activity>
     </application>
 
 </manifest>
