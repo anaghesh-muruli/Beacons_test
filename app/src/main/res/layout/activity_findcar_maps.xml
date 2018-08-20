@@ -21,16 +21,16 @@
             map:layout_constraintStart_toStartOf="parent"
             map:layout_constraintTop_toTopOf="parent"
             map:layout_constraintVertical_bias="1.0"
-            tools:context=".Parking" />
+            tools:context=".FindcarMaps" />
 
 
         <ImageView
             android:id="@+id/imageView7"
-            android:layout_width="429dp"
-            android:layout_height="144dp"
+            android:layout_width="474dp"
+            android:layout_height="110dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
-            android:src="@drawable/bottom_plan"
+            android:src="@drawable/bottom_bg"
             map:layout_constraintBottom_toBottomOf="parent"
             map:layout_constraintEnd_toEndOf="parent"
             map:layout_constraintStart_toStartOf="parent" />
@@ -51,35 +51,54 @@
 
         </android.support.design.widget.AppBarLayout>
 
-        <Button
-            android:id="@+id/confirm_park"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:background="@drawable/confirm_park"
-            android:text="confirm park"
-            android:textColor="#ffffff"
-            map:layout_constraintBottom_toBottomOf="parent"
-            map:layout_constraintEnd_toEndOf="@+id/imageView7"
-            map:layout_constraintStart_toStartOf="parent" />
+        <ImageView
+            android:id="@+id/imageView8"
+            android:layout_width="71dp"
+            android:layout_height="68dp"
+            android:layout_marginBottom="12dp"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/direction"
+            map:layout_constraintBottom_toBottomOf="@+id/imageView7"
+            map:layout_constraintEnd_toEndOf="parent" />
 
         <TextView
-            android:id="@+id/textView5"
+            android:id="@+id/vin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:text="Car VIN:"
+            android:textColor="@color/colorPrimary"
+            android:textSize="21sp"
+            map:layout_constraintEnd_toStartOf="@+id/imageView8"
+            map:layout_constraintHorizontal_bias="0.034"
+            map:layout_constraintStart_toStartOf="parent"
+            map:layout_constraintTop_toTopOf="@+id/vin_result" />
+
+        <TextView
+            android:id="@+id/vin_result"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="28dp"
+            android:text="65474"
+            android:textColor="@color/colorPrimary"
+            android:textSize="21sp"
+            map:layout_constraintStart_toEndOf="@+id/vin"
+            map:layout_constraintTop_toTopOf="@+id/imageView7" />
+
+        <TextView
+            android:id="@+id/textView8"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
-            android:text="Please ensure the location is correct"
-            android:textColor="#ffffff"
-            android:textSize="17sp"
-            map:layout_constraintBottom_toTopOf="@+id/confirm_park"
-            map:layout_constraintEnd_toEndOf="parent"
-            map:layout_constraintStart_toStartOf="@+id/imageView7"
-            map:layout_constraintTop_toTopOf="@+id/imageView7" />
+            android:text="TextView"
+            map:layout_constraintBottom_toBottomOf="parent"
+            map:layout_constraintStart_toStartOf="parent"
+            map:layout_constraintTop_toBottomOf="@+id/vin"
+            map:layout_constraintVertical_bias="0.105" />
 
     </android.support.constraint.ConstraintLayout>
 </FrameLayout>

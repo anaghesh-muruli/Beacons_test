@@ -10,7 +10,6 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
     <uses-permission android:name="package_name.permission.MAPS_RECEIVE" />
 
@@ -38,8 +37,6 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-
-
         <meta-data
             android:name="com.google.android.gms.vision.DEPENDENCIES"
             android:value="barcode" />
@@ -64,7 +61,6 @@
         <activity
             android:name=".Checkin"
             android:parentActivityName=".Home" />
-
         <activity
             android:name=".ScanQR"
             android:parentActivityName=".Checkin" />
@@ -85,10 +81,11 @@
 
         <activity
             android:name=".Parking"
-            android:label="@string/title_activity_praking" >
-
-        </activity>
+            android:label="@string/title_activity_praking"></activity>
         <activity android:name=".FindCar" />
+        <activity
+            android:name=".FindcarMaps"
+            android:label="@string/title_activity_findcar_maps"></activity>
     </application>
 
 </manifest>
