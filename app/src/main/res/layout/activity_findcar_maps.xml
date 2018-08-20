@@ -21,7 +21,8 @@
             map:layout_constraintStart_toStartOf="parent"
             map:layout_constraintTop_toTopOf="parent"
             map:layout_constraintVertical_bias="1.0"
-            tools:context=".FindcarMaps" />
+            tools:context=".FindcarMaps"
+            />
 
 
         <ImageView
@@ -46,13 +47,13 @@
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"
                 app:popupTheme="@style/AppTheme.PopupOverlay"
-                app:title="Check-out"
+                app:title="Find car"
                 app:titleTextColor="#000000" />
 
         </android.support.design.widget.AppBarLayout>
 
         <ImageView
-            android:id="@+id/imageView8"
+            android:id="@+id/navigation"
             android:layout_width="71dp"
             android:layout_height="68dp"
             android:layout_marginBottom="12dp"
@@ -70,7 +71,7 @@
             android:text="Car VIN:"
             android:textColor="@color/colorPrimary"
             android:textSize="21sp"
-            map:layout_constraintEnd_toStartOf="@+id/imageView8"
+            map:layout_constraintEnd_toStartOf="@+id/navigation"
             map:layout_constraintHorizontal_bias="0.034"
             map:layout_constraintStart_toStartOf="parent"
             map:layout_constraintTop_toTopOf="@+id/vin_result" />

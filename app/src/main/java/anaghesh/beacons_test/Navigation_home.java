@@ -41,7 +41,7 @@ public class Navigation_home extends AppCompatActivity
         findcar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(Navigation_home.this,MainActivity.class));
+                startActivity(new Intent(Navigation_home.this,FindCar.class));
             }
         });
         checkout.setOnClickListener(new View.OnClickListener() {
