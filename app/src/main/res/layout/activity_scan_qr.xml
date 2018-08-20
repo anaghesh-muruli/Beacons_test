@@ -14,7 +14,7 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar2"
         app:titleTextColor="#000000"
-        app:title="Check-in"
+        app:title="Check Barcode"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
@@ -78,7 +78,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:gravity="center_horizontal"
-        android:text="QR Result"
+        android:text="Barcode Result"
         android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

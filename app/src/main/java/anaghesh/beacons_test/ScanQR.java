@@ -56,13 +56,13 @@ public class ScanQR extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scan_qr);
-       toolbarSetup();
+        toolbarSetup();
         cameraPreview =  findViewById(R.id.camera_pre);
         Log.e("error",""+cameraPreview);
         txtResult = findViewById(R.id.txtResult);
 
         barcodeDetector = new BarcodeDetector.Builder(this)
-                .setBarcodeFormats(Barcode.QR_CODE)
+              //  .setBarcodeFormats(Barcode.QR_CODE)
                 .build();
         cameraSource = new CameraSource
                 .Builder(this, barcodeDetector)
@@ -115,7 +115,7 @@ public class ScanQR extends AppCompatActivity {
                             txtResult.setText(qrcodes.valueAt(0).displayValue);
 
                             Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-                            vibrator.vibrate(200);
+                            vibrator.vibrate(100);
 
                             android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(ScanQR.this);
                             builder.setTitle("Vehicle assigned");

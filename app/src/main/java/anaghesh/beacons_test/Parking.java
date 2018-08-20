@@ -10,18 +10,19 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class Praking extends FragmentActivity implements OnMapReadyCallback {
+public class Parking extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_praking);
+        setContentView(R.layout.activity_parking);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
     }
 
 
@@ -41,6 +42,7 @@ public class Praking extends FragmentActivity implements OnMapReadyCallback {
         // Add a marker in Sydney and move the camera
         LatLng sydney = new LatLng(-34, 151);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        float zoomLevel = 16.0f; //This goes up to 21
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, zoomLevel));
     }
 }

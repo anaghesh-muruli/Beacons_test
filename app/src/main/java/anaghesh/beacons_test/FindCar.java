@@ -10,7 +10,7 @@ public class FindCar extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_find_car);
     }
-    void setup(){
+    void setupUI(){
 
     }
 }

@@ -8,6 +8,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import es.dmoral.toasty.Toasty;
+
 public class Login extends AppCompatActivity {
 private Button continue_btn;
 private EditText mobile_num,pass;
@@ -23,6 +25,7 @@ private EditText mobile_num,pass;
             @Override
             public void onClick(View view) {
                 if(validate()){
+                    Toasty.success(Login.this, "Login Successful!", Toast.LENGTH_SHORT, true).show();
                     startActivity(new Intent(Login.this,Navigation_home.class));
                 }
             }

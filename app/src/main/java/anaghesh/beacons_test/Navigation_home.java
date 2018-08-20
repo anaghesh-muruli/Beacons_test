@@ -1,5 +1,6 @@
 package anaghesh.beacons_test;
 
+import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -34,7 +35,13 @@ public class Navigation_home extends AppCompatActivity
         park.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(Navigation_home.this, ParkCar.class));
+               startActivity(new Intent(Navigation_home.this, Parking.class));
+            }
+        });
+        findcar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(Navigation_home.this,MainActivity.class));
             }
         });
         checkout.setOnClickListener(new View.OnClickListener() {
@@ -51,6 +58,7 @@ public class Navigation_home extends AppCompatActivity
                         .setAction("Action", null).show();
             }
         });
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -92,8 +100,14 @@ public class Navigation_home extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.bluetooth) {
+            BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+            if (mBluetoothAdapter.isEnabled()) {
+                mBluetoothAdapter.disable();
+            }
+            else
+                mBluetoothAdapter.enable();
+
         }
 
         return super.onOptionsItemSelected(item);

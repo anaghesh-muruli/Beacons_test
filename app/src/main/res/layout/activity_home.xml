@@ -9,10 +9,6 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -29,6 +25,7 @@
             app:layout_constraintStart_toEndOf="@+id/checkin"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/park" />
+
 
         <ImageView
             android:id="@+id/checkin"
@@ -56,6 +53,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/checkin"
             app:srcCompat="@drawable/findcar" />
+
     </android.support.constraint.ConstraintLayout>
 
 </android.support.constraint.ConstraintLayout>
