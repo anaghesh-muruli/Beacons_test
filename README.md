@@ -7,8 +7,8 @@ TO-DO:<br>
 3.Navigation - Done drawer<br>
 4.Search Beacon <br>
 5.Checkin - Done<br>
-6.QR Scan<br>
-7.Assigned<br>
+6.Barcode Scan- Done<br>
+7.Assigned - Done<br>
 8.Park car<br>
 9.Find car<br>
 10.Checkout<br>
