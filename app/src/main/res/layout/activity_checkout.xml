@@ -105,27 +105,27 @@
                 app:srcCompat="@drawable/electric_car" />
 
             <TextView
-                android:id="@+id/textView2"
+                android:id="@+id/tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="24dp"
-                android:text="Beacon No: 984"
+                android:text="Beacon No:"
                 android:textSize="17sp"
                 app:layout_constraintStart_toEndOf="@+id/imageView4"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/textView4"
+                android:id="@+id/vin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
 
                 android:layout_marginTop="4dp"
-                android:text="Car VIN: 774581"
+                android:text="Car VIN: "
                 android:textSize="17sp"
                 app:layout_constraintStart_toEndOf="@+id/imageView4"
-                app:layout_constraintTop_toBottomOf="@+id/textView2" />
+                app:layout_constraintTop_toBottomOf="@+id/tv" />
 
             <ng.max.slideview.SlideView
                 android:id="@+id/slideview"
@@ -138,7 +138,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView4"
+                app:layout_constraintTop_toBottomOf="@+id/vin"
                 app:sv_animateSlideText="true"
                 app:sv_buttonBackgroundColor="#FFFFFF"
 
@@ -147,6 +147,31 @@
                 app:sv_slideText="Checkout"
                 app:sv_slideTextColor="#ffffff"
                 app:sv_slideTextSize="16sp" />
+
+            <TextView
+                android:id="@+id/bcn_result"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="24dp"
+                android:textSize="17sp"
+
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.025"
+                app:layout_constraintStart_toEndOf="@+id/tv"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/v_result"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="4dp"
+                android:textSize="17sp"
+                app:layout_constraintBottom_toTopOf="@+id/slideview"
+                app:layout_constraintStart_toEndOf="@+id/vin"
+                app:layout_constraintTop_toBottomOf="@+id/bcn_result"
+                app:layout_constraintVertical_bias="0.0" />
 
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>

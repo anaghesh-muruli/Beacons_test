@@ -14,6 +14,8 @@
     <uses-permission android:name="package_name.permission.MAPS_RECEIVE" />
 
     <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
 
     <uses-permission android:name="android.permission.CAMERA" />
 
@@ -81,11 +83,14 @@
 
         <activity
             android:name=".Parking"
-            android:label="@string/title_activity_praking"></activity>
-        <activity android:name=".FindCar" />
+            android:parentActivityName=".Home"
+            android:label="@string/title_activity_praking"/>
+        <activity android:name=".FindCar"
+             android:parentActivityName=".Home" />
         <activity
             android:name=".FindcarMaps"
-            android:label="@string/title_activity_findcar_maps"></activity>
+            android:parentActivityName=".FindCar"
+            android:label="@string/title_activity_findcar_maps"/>
     </application>
 
 </manifest>

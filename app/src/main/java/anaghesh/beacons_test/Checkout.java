@@ -2,6 +2,7 @@ package anaghesh.beacons_test;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +12,8 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import ng.max.slideview.SlideView;
 
@@ -18,25 +21,38 @@ public class Checkout extends AppCompatActivity {
     private Button search;
     private CardView cardView;
     private EditText vinNum;
-
+    private TextView beacon_result,vin_result;
+    public static SharedPreferences sharedpreferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_checkout);
         toolbarSetup();
         setupUI();
-
+        sharedpreferences = getSharedPreferences("Database",
+                Context.MODE_PRIVATE); 
+        SharedPreferences.Editor editor = sharedpreferences.edit();
         search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                InputMethodManager inputManager = (InputMethodManager)
+                InputMethodManager inputManager = (InputMethodManager) //auto hide keyboard
                         getSystemService(Context.INPUT_METHOD_SERVICE);
 
                 inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
                         InputMethodManager.HIDE_NOT_ALWAYS);
-                cardView.setVisibility(View.VISIBLE);
+
+                if((vinNum.getText().toString().equals(sharedpreferences.getString(ScanQR.BEACON_NUM, "")))||vinNum.getText().toString().equals(sharedpreferences.getString(ScanQR.VIN_NUM, "")))
+                {
+                    beacon_result.setText(sharedpreferences.getString(ScanQR.BEACON_NUM, ""));
+                    vin_result.setText(sharedpreferences.getString(ScanQR.VIN_NUM, ""));
+                    cardView.setVisibility(View.VISIBLE);
+                }
+                else
+                    Toast.makeText(Checkout.this, "Invalid input", Toast.LENGTH_SHORT).show();
+               
             }
         });
+        //slide to checkout feature
         SlideView slideView = findViewById(R.id.slideview);
         slideView.setOnSlideCompleteListener(new SlideView.OnSlideCompleteListener() {
             @Override
@@ -67,6 +83,9 @@ public class Checkout extends AppCompatActivity {
         search = findViewById(R.id.btn_search_checkout);
         cardView = findViewById(R.id.cv_checkout);
         vinNum = findViewById(R.id.et_vin);
+        beacon_result = findViewById(R.id.bcn_result);
+        vin_result = findViewById(R.id.v_result);
+
     }
     void toolbarSetup(){
         Toolbar toolbar = findViewById(R.id.toolbar_checkout);

@@ -24,10 +24,10 @@ private EditText mobile_num,pass;
         continue_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(validate()){
+
                     Toasty.success(Login.this, "Login Successful!", Toast.LENGTH_SHORT, true).show();
                     startActivity(new Intent(Login.this,Navigation_home.class));
-                }
+
             }
         });
       

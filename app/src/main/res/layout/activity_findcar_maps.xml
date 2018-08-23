@@ -42,7 +42,7 @@
             android:theme="@style/AppTheme.AppBarOverlay">
 
             <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar_parking"
+                android:id="@+id/toolbar_findcarmap"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"
@@ -89,17 +89,35 @@
             map:layout_constraintTop_toTopOf="@+id/imageView7" />
 
         <TextView
-            android:id="@+id/textView8"
+            android:id="@+id/beacon_num"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
-            android:text="TextView"
+            android:text="Parked zone: "
+            android:textSize="20sp"
+            android:textColor="#a6a5a5"
             map:layout_constraintBottom_toBottomOf="parent"
             map:layout_constraintStart_toStartOf="parent"
             map:layout_constraintTop_toBottomOf="@+id/vin"
             map:layout_constraintVertical_bias="0.105" />
+
+        <TextView
+            android:id="@+id/parkedzone_result"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:text="AH-11"
+            android:textColor="#a6a5a5"
+            android:textSize="20sp"
+
+            map:layout_constraintBottom_toBottomOf="parent"
+            map:layout_constraintEnd_toStartOf="@+id/navigation"
+            map:layout_constraintHorizontal_bias="0.0"
+            map:layout_constraintStart_toEndOf="@+id/beacon_num" />
 
     </android.support.constraint.ConstraintLayout>
 </FrameLayout>

@@ -1,8 +1,10 @@
 package anaghesh.beacons_test;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -14,7 +16,9 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.widget.TextView;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
@@ -23,18 +27,26 @@ import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 import java.io.IOException;
 
+// IMP: Google vision API used. Formats to be controlled
+
 public class ScanQR extends AppCompatActivity {
 
     SurfaceView cameraPreview;
-    TextView txtResult;
+    EditText beacon,vin;
     BarcodeDetector barcodeDetector;
     CameraSource cameraSource;
+    Button assign;
+    public final static String BEACON_NUM="Beacon_num";
+    public final static String VIN_NUM="vin_num";
+
+
     final int RequestCameraPermissionID = 1001;
 
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         cameraPreview =  findViewById(R.id.camera_pre);
+
         switch (requestCode) {
             case RequestCameraPermissionID: {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -43,6 +55,7 @@ public class ScanQR extends AppCompatActivity {
                     }
                     try {
                         cameraSource.start(cameraPreview.getHolder());
+
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -59,8 +72,35 @@ public class ScanQR extends AppCompatActivity {
         toolbarSetup();
         cameraPreview =  findViewById(R.id.camera_pre);
         Log.e("error",""+cameraPreview);
-        txtResult = findViewById(R.id.txtResult);
+        beacon = findViewById(R.id.beacon_edittext);
+        beacon.setText("");//test
 
+        vin = findViewById(R.id.vin_edittext);
+        vin.setText("");//test
+        assign = findViewById(R.id.assign);
+        assign.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferences sharedPreferences = getSharedPreferences("Database", MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString(BEACON_NUM,beacon.getText().toString());
+                editor.putString(VIN_NUM,vin.getText().toString());
+                editor.apply();
+                final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(ScanQR.this);
+                builder.setTitle("Checkin Successful");
+                //  builder.setIcon(R.mipmap.ic_launcher);
+                builder.setMessage("Beacon No. "+sharedPreferences.getString(BEACON_NUM,"")+" is assigned to VIN "+sharedPreferences.getString(VIN_NUM,""))
+                        .setCancelable(false)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                               finish();
+                            }
+                        });
+                android.app.AlertDialog alert = builder.create();
+                alert.show();
+
+            }
+        });
         barcodeDetector = new BarcodeDetector.Builder(this)
               //  .setBarcodeFormats(Barcode.QR_CODE)
                 .build();
@@ -69,6 +109,7 @@ public class ScanQR extends AppCompatActivity {
                 .setRequestedPreviewSize(640, 480)
                 .build();
         //Add Event
+        alert();
         cameraPreview.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
             public void surfaceCreated(SurfaceHolder surfaceHolder) {
@@ -108,28 +149,25 @@ public class ScanQR extends AppCompatActivity {
                 final SparseArray<Barcode> qrcodes = detections.getDetectedItems();
                 if(qrcodes.size() != 0)
                 {
-                    txtResult.post(new Runnable() {
+                    beacon.post(new Runnable() {
                         @Override
                         public void run() {
                             cameraSource.stop( );
-                            txtResult.setText(qrcodes.valueAt(0).displayValue);
+                            Log.e("QR ",""+qrcodes.valueAt(0).displayValue);
 
+                            Log.e("Beacon ",""+beacon.getText().toString());
+
+                            Log.e("VIN ",""+vin.getText().toString());
+
+                            if(beacon.getText().toString().isEmpty()) {
+                                beacon.setText(qrcodes.valueAt(0).displayValue);
+                                vinAlert();
+                            }
+                            else {
+                                vin.setText(qrcodes.valueAt(0).displayValue);
+                            }
                             Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                             vibrator.vibrate(100);
-
-                            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(ScanQR.this);
-                            builder.setTitle("Vehicle assigned");
-                          //  builder.setIcon(R.mipmap.ic_launcher);
-                            builder.setMessage("Beacon 989 is assigned to Vehicle 336GBD887")
-                                    .setCancelable(false)
-                                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {
-                                            finish();
-                                        }
-                                    });
-                            android.app.AlertDialog alert = builder.create();
-                            alert.show();
-
 
 
                         }
@@ -138,6 +176,7 @@ public class ScanQR extends AppCompatActivity {
                 }
 
             }
+
         });
     }
     void toolbarSetup(){
@@ -145,5 +184,46 @@ public class ScanQR extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+    }
+    void alert(){
+        final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(ScanQR.this);
+        builder.setTitle("Scan Beacon Barcode");
+        //  builder.setIcon(R.mipmap.ic_launcher);
+        builder.setMessage("Please scan the beacon barcode")
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                    }
+                });
+        android.app.AlertDialog alert = builder.create();
+        alert.show();
+
+    }
+    void vinAlert(){
+        final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(ScanQR.this);
+        builder.setTitle("Scan Car Barcode");
+        //  builder.setIcon(R.mipmap.ic_launcher);
+        builder.setMessage("Please scan the car barcode")
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        restartCamera();
+                    }
+                });
+        android.app.AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+
+    @SuppressLint("MissingPermission")
+    public void restartCamera()
+    {
+        Log.e("method","Restart Camera");
+        try {
+            cameraSource.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

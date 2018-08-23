@@ -17,6 +17,7 @@
         android:title=""
         android:icon="@drawable/ic_bluetooth_black_24dp"
         android:iconTintMode="add"
+        android:iconTint="#0022ff"
         app:showAsAction="always" />
 
 </menu>

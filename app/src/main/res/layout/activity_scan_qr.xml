@@ -14,7 +14,7 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar2"
         app:titleTextColor="#000000"
-        app:title="Check Barcode"
+        app:title="Scan Barcode"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
@@ -35,7 +35,7 @@
         app:layout_constraintHorizontal_bias="0.482"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ref"
-        app:layout_constraintVertical_bias="0.264">
+        app:layout_constraintVertical_bias="0.071">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
@@ -45,7 +45,7 @@
 
                 android:id="@+id/camera_pre"
                 android:layout_width="350dp"
-                android:layout_height="450dp"
+                android:layout_height="350dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -67,23 +67,65 @@
         </android.support.constraint.ConstraintLayout>
 
     </android.support.v7.widget.CardView>
-    <TextView
-        android:id="@+id/txtResult"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
 
-        android:layout_centerHorizontal="true"
+    <EditText
+        android:id="@+id/beacon_edittext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/search_bar"
+        android:ems="10"
+        android:hint="Enter Beacon number"
+        android:inputType="textPersonName"
+        android:paddingBottom="5dp"
+        android:paddingLeft="50dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.491"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cv_qrcode" />
+
+    <EditText
+        android:id="@+id/vin_edittext"
+        android:layout_width="wrap_content"
+
+        android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:gravity="center_horizontal"
-        android:text="Barcode Result"
-        android:textSize="15sp"
+        android:background="@drawable/search_bar"
+        android:ems="10"
+        android:hint="Enter VIN number"
+        android:inputType="textPersonName"
+        android:paddingBottom="5dp"
+        android:paddingLeft="50dp"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.491"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/beacon_edittext"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Button
+        android:id="@+id/assign"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="assign"
+        android:background="@drawable/assign"
+        android:textColor="@color/colorPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cv_qrcode" />
+        app:layout_constraintTop_toBottomOf="@+id/vin_edittext" />
+
+
 
 
 </android.support.constraint.ConstraintLayout>
