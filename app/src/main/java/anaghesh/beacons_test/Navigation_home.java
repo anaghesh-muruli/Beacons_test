@@ -25,6 +25,7 @@ public class Navigation_home extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setupUI();
+
         checkin_img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

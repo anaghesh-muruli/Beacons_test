@@ -15,6 +15,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+
 import ng.max.slideview.SlideView;
 
 public class Checkout extends AppCompatActivity {
@@ -41,7 +43,7 @@ public class Checkout extends AppCompatActivity {
                 inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
                         InputMethodManager.HIDE_NOT_ALWAYS);
 
-                if((vinNum.getText().toString().equals(sharedpreferences.getString(ScanQR.BEACON_NUM, "")))||vinNum.getText().toString().equals(sharedpreferences.getString(ScanQR.VIN_NUM, "")))
+                if((vinNum.getText().toString().equalsIgnoreCase(sharedpreferences.getString(ScanQR.BEACON_NUM, "")))||vinNum.getText().toString().equalsIgnoreCase(sharedpreferences.getString(ScanQR.VIN_NUM, "")))
                 {
                     beacon_result.setText(sharedpreferences.getString(ScanQR.BEACON_NUM, ""));
                     vin_result.setText(sharedpreferences.getString(ScanQR.VIN_NUM, ""));
@@ -60,7 +62,11 @@ public class Checkout extends AppCompatActivity {
                 // vibrate the device
                 Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                 vibrator.vibrate(200);
-
+                File sharedPreferenceFile = new File("/data/data/"+ getPackageName()+ "/shared_prefs/");
+                File[] listFiles = sharedPreferenceFile.listFiles();
+                for (File file : listFiles) {
+                    file.delete();
+                }
                 android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(Checkout.this);
                 builder.setTitle("Checkout Successful");
                 builder.setIcon(R.mipmap.ic_launcher);

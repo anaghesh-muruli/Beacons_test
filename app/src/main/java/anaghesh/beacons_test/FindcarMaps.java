@@ -16,6 +16,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.ufobeaconsdk.callback.OnConnectSuccessListener;
@@ -77,6 +79,8 @@ public class FindcarMaps extends AppCompatActivity implements OnMapReadyCallback
     }
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.car);
+
         mMap = googleMap;
         String lat11=sharedpreferences.getString(Lat,"");
         lat = Double.parseDouble(lat11);
@@ -84,7 +88,10 @@ public class FindcarMaps extends AppCompatActivity implements OnMapReadyCallback
         lng = Double.parseDouble(long11);
         // Add a marker in Sydney and move the camera
         latLng = new LatLng(lat, lng);
-        mMap.addMarker(new MarkerOptions().position(latLng).title("Marker in Sydney"));
+        mMap.addMarker(new MarkerOptions()
+                .position(latLng)
+                .title("Marker in Sydney")
+                .icon(icon));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,16));
     }
     void toolbarSetup(){
@@ -114,9 +121,7 @@ public class FindcarMaps extends AppCompatActivity implements OnMapReadyCallback
                                                        ufodevice.getProximityUUID();
                                                        //macid.setText(ufodevice.getBtdevice().getAddress());
                                                        Toast.makeText(FindcarMaps.this, "Car No:211 is NearBy"+ ufodevice.getDistanceInString(), Toast.LENGTH_SHORT).show();
-                                                        Log.e("Beacon dist",""+ufodevice.getDistanceInString());
-                                                        Log.e("Beacon proximity",""+ufodevice.getProximityUUID());
-                                                        Log.e("Beacon Rssi",""+ufodevice.getRssi());
+
 
 
                                                    }
@@ -174,9 +179,19 @@ public class FindcarMaps extends AppCompatActivity implements OnMapReadyCallback
 
     void connect_beacons(UFODevice ufodevice){
         Log.e("method","connect_beacons");
+        Log.e("Beacon dist",""+ufodevice.getDistanceInString());
+        Log.e("Beacon dist",""+ufodevice.getDistance());
+        Log.e("Beacon voltage",""+ufodevice.getEddystoneTLMBatteryVoltage());
+        Log.e("Beacon",""+ufodevice.getDeviceType());
+       Log.e("ID",""+ufodevice.getModelId());
+        Log.e("Beacon Rssi",""+ufodevice.getRssi());
+
+
+        Log.e("Dist",""+calculateDistance(ufodevice.getTxPower(),ufodevice.getRssi()));
         ufodevice.connect(new OnConnectSuccessListener()
                           { @Override public void onSuccess(UFODevice ufoDevice)
                           {   Log.e("Status","Device connected");
+
                           stopScan();
                               Toast.makeText(FindcarMaps.this, "Device connected", Toast.LENGTH_SHORT).show();
                           } },
@@ -189,6 +204,20 @@ public class FindcarMaps extends AppCompatActivity implements OnMapReadyCallback
                     }
                     } );}
                 });
+    }
+    protected static double calculateDistance(int txPower, int rssi) {
+        if (rssi == 0) {
+            return -1.0; // if we cannot determine distance, return -1.
+        }
+
+        double ratio = rssi*1.0/txPower;
+        if (ratio < 1.0) {
+            return Math.pow(ratio,10);
+        }
+        else {
+            double accuracy =  (0.89976)*Math.pow(ratio,7.7095) + 0.111;
+            return accuracy;
+        }
     }
 
 }

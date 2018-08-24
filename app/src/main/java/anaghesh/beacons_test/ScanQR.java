@@ -221,7 +221,7 @@ public class ScanQR extends AppCompatActivity {
     {
         Log.e("method","Restart Camera");
         try {
-            cameraSource.start();
+            cameraSource.start(cameraPreview.getHolder());
         } catch (IOException e) {
             e.printStackTrace();
         }

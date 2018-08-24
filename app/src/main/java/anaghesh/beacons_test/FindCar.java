@@ -47,7 +47,7 @@ public class FindCar extends AppCompatActivity {
         sharedpreferences = getSharedPreferences("Database",
                 Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedpreferences.edit();
-        if((beaconNum.getText().toString().equals(sharedpreferences.getString(ScanQR.BEACON_NUM, "")))||beaconNum.getText().toString().equals(sharedpreferences.getString(ScanQR.VIN_NUM, "")))
+        if((beaconNum.getText().toString().equalsIgnoreCase(sharedpreferences.getString(ScanQR.BEACON_NUM, "")))||beaconNum.getText().toString().equalsIgnoreCase(sharedpreferences.getString(ScanQR.VIN_NUM, "")))
         {
            startActivity(new Intent(this, FindcarMaps.class));
         }
