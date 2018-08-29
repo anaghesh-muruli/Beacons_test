@@ -1,0 +1,24 @@
+<resources>
+    <!--
+    TODO: Before you run your application, you need a Google Maps API key.
+
+    To get one, follow this link, follow the directions and press "Create" at the end:
+
+    https://console.developers.google.com/flows/enableapi?apiid=maps_android_backend&keyType=CLIENT_SIDE_ANDROID&r=4B:56:17:CE:5D:2C:EC:73:68:8B:FD:12:DF:5C:96:29:55:2F:FA:23%3Banaghesh.beacons_test
+
+    You can also add your credentials to an existing key, using these values:
+
+    Package name:
+    4B:56:17:CE:5D:2C:EC:73:68:8B:FD:12:DF:5C:96:29:55:2F:FA:23
+
+    SHA-1 certificate fingerprint:
+    4B:56:17:CE:5D:2C:EC:73:68:8B:FD:12:DF:5C:96:29:55:2F:FA:23
+
+    Alternatively, follow the directions here:
+    https://developers.google.com/maps/documentation/android/start#get-key
+
+    Once you have your key (it starts with "AIza"), replace the "google_maps_key"
+    string in this file.
+    -->
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyAsXRWUZBbJwKEQoBYG2ip9C-1MHfmvcIc</string>
+</resources>

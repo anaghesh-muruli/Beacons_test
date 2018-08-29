@@ -26,6 +26,7 @@ public class Navigation_home extends AppCompatActivity
         setSupportActionBar(toolbar);
         setupUI();
 
+        //Home page elements
         checkin_img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

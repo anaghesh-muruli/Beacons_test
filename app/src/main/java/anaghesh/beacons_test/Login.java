@@ -37,6 +37,7 @@ private EditText mobile_num,pass;
         mobile_num = findViewById(R.id.et_mobile);
         pass = findViewById(R.id.et_password);
     }
+    //Validates the user input
     Boolean validate(){
         if((mobile_num.getText().toString().isEmpty())||pass.getText().toString().isEmpty()){
             Toast.makeText(this, "Mobile number or password cannot be empty", Toast.LENGTH_SHORT).show();

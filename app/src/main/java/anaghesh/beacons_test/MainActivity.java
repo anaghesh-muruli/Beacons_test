@@ -16,8 +16,13 @@ import com.ufobeaconsdk.main.UFOBeaconManager;
 import com.ufobeaconsdk.main.UFODevice;
      /* created by Anaghesh Muruli on 14-08-2018
       * github repo: Beacons_test
-      * Added dependency from UFO Beacon SDK   */
+      * Added dependency from UFO Beacon SDK
+      *
+      *
+      * IMP: This activity is deprecated */
 
+
+@Deprecated
 public class MainActivity extends AppCompatActivity {
     UFOBeaconManager ufoBeaconManager = new UFOBeaconManager(this);
     private Button connect;

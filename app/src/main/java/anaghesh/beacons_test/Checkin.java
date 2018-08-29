@@ -13,6 +13,7 @@ import android.widget.EditText;
 
 /* This activity is deprecated */
 
+@Deprecated
 public class Checkin extends AppCompatActivity {
     private CardView cardView;
     private Button search, qrScan;
