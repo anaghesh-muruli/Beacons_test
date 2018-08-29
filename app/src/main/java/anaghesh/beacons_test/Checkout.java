@@ -34,6 +34,7 @@ public class Checkout extends AppCompatActivity {
         sharedpreferences = getSharedPreferences("Database",
                 Context.MODE_PRIVATE); 
         SharedPreferences.Editor editor = sharedpreferences.edit();
+
         search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -54,6 +55,7 @@ public class Checkout extends AppCompatActivity {
                
             }
         });
+
         //slide to checkout feature
         SlideView slideView = findViewById(R.id.slideview);
         slideView.setOnSlideCompleteListener(new SlideView.OnSlideCompleteListener() {

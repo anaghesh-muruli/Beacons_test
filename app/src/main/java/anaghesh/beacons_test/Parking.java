@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -40,18 +41,28 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.List;
+
+import static anaghesh.beacons_test.ScanQR.BEACON_NUM;
+import static anaghesh.beacons_test.ScanQR.VIN_NUM;
+
 //uses google maps API
 public class Parking extends AppCompatActivity implements OnMapReadyCallback {
 
     GoogleMap mGoogleMap;
     SupportMapFragment mapFrag;
+    private TextView bcn_result, vin_result;
     LocationRequest mLocationRequest;
     Location mLastLocation;
     Marker mCurrLocationMarker;
+    public static SharedPreferences sharedPreferences;
+
     protected static final int REQUEST_CHECK_SETTINGS = 0x1;
     GoogleApiClient mGoogleApiClient;
     public static  SharedPreferences sharedpreferences;
@@ -72,11 +83,18 @@ public class Parking extends AppCompatActivity implements OnMapReadyCallback {
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         confirm = findViewById(R.id.confirm_park);
+        vin_result = findViewById(R.id.vin_res);
+        bcn_result = findViewById(R.id.bcn_res);
+        sharedPreferences = getSharedPreferences("Database", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
         sharedpreferences = getSharedPreferences("Database",
                 Context.MODE_PRIVATE);
+        vin_result.setText(sharedPreferences.getString(VIN_NUM, ""));
+        bcn_result.setText(sharedPreferences.getString(BEACON_NUM, ""));
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(Parking.this);
                 builder.setTitle("Parking Successful");
                 builder.setIcon(R.mipmap.ic_launcher);
@@ -106,7 +124,6 @@ public class Parking extends AppCompatActivity implements OnMapReadyCallback {
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
-
         mGoogleMap = googleMap;
         mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
@@ -114,6 +131,7 @@ public class Parking extends AppCompatActivity implements OnMapReadyCallback {
         mLocationRequest.setInterval(120000); // two minute interval
         mLocationRequest.setFastestInterval(120000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(this,
@@ -129,7 +147,7 @@ public class Parking extends AppCompatActivity implements OnMapReadyCallback {
         }
         else {
             mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
-            //mGoogleMap.setMyLocationEnabled(true);
+            mGoogleMap.setMyLocationEnabled(true);
             googleMap.getUiSettings().setZoomControlsEnabled(true);
         }
 
@@ -138,6 +156,8 @@ public class Parking extends AppCompatActivity implements OnMapReadyCallback {
     LocationCallback mLocationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
+            BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.markertest);
+
             List<Location> locationList = locationResult.getLocations();
             if (locationList.size() > 0) {
                 //The last location in the list is the newest
@@ -149,7 +169,10 @@ public class Parking extends AppCompatActivity implements OnMapReadyCallback {
                 //Place current location marker
                 LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
                 CameraUpdate yourLocation = CameraUpdateFactory.newLatLngZoom(latLng, 16);
-
+                mGoogleMap.addMarker(new MarkerOptions()
+                        .position(latLng)
+                        .title("Marker in Sydney")
+                        .icon(icon));
                 mGoogleMap.animateCamera(yourLocation);
                 SharedPreferences.Editor editor = sharedpreferences.edit();
                 editor.putString(Lat,Double.toString(latLng.latitude) );

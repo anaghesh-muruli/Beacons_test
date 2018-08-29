@@ -11,6 +11,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
+/* This activity is deprecated */
+
 public class Checkin extends AppCompatActivity {
     private CardView cardView;
     private Button search, qrScan;

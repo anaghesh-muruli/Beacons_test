@@ -43,6 +43,7 @@ public class FindCar extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
+    //Validate the user input and upload it to BD
     void validate(){
         sharedpreferences = getSharedPreferences("Database",
                 Context.MODE_PRIVATE);

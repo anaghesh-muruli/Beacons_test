@@ -1,9 +1,15 @@
 package anaghesh.beacons_test;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -28,21 +34,25 @@ import com.ufobeaconsdk.main.UFOBeaconManager;
 import com.ufobeaconsdk.main.UFODevice;
 import com.ufobeaconsdk.main.UFODeviceType;
 
+import java.text.DecimalFormat;
+
 import static anaghesh.beacons_test.Parking.Lat;
 import static anaghesh.beacons_test.Parking.sharedpreferences;
 import static anaghesh.beacons_test.ScanQR.VIN_NUM;
 
-//Uses Google maps API
+//Uses Google maps API and UFO Beacon SDK
 public class FindcarMaps extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private ImageView navigation;
-    private double lat,lng;
-    private TextView zone_result,vin_result;
+    private double lat, lng;
+    private TextView zone_result, vin_result;
     private UFODevice ufodevice;
     LatLng latLng;
     public static SharedPreferences sharedPreferences;
-    private UFOBeaconManager ufoBeaconManager;
+    private UFOBeaconManager ufoBeaconManager; //UFO Beacon SDK
+    private static DecimalFormat df2 = new DecimalFormat("#0.##");
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,38 +71,42 @@ public class FindcarMaps extends AppCompatActivity implements OnMapReadyCallback
         navigation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.e("Lat",""+sharedPreferences.getString(Lat, ""));
-                Log.e("Long",""+sharedPreferences.getString(Parking.Long, ""));
+                Log.e("Lat", "" + sharedPreferences.getString(Lat, ""));
+                Log.e("Long", "" + sharedPreferences.getString(Parking.Long, ""));
                 String uri = "http://maps.google.com/maps?=" + "&daddr=" + sharedPreferences.getString(Lat, "") + "," + sharedPreferences.getString(Parking.Long, "");
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
                 startActivity(intent);
 
             }
         });
-        vin_result.setText(sharedPreferences.getString(VIN_NUM,""));
+        vin_result.setText(sharedPreferences.getString(VIN_NUM, ""));
     }
 
-    void setupUI(){
+    void setupUI() {
         navigation = findViewById(R.id.navigation);
         vin_result = findViewById(R.id.vin_result);
         zone_result = findViewById(R.id.parkedzone_result);
     }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.car);
 
         mMap = googleMap;
-        String lat11=sharedpreferences.getString(Lat,"");
+        String lat11 = sharedpreferences.getString(Lat, "");
         lat = Double.parseDouble(lat11);
-        String long11 = sharedpreferences.getString(Parking.Long,"");
+        String long11 = sharedpreferences.getString(Parking.Long, "");
         lng = Double.parseDouble(long11);
         // Add a marker in Sydney and move the camera
         latLng = new LatLng(lat, lng);
         mMap.addMarker(new MarkerOptions()
                 .position(latLng)
-                .title("Marker in Sydney")
+                .title("Car parked here")
                 .icon(icon));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,16));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16));
+        mMap.getUiSettings().setMyLocationButtonEnabled(true);
+
+
     }
     void toolbarSetup(){
         Toolbar toolbar = findViewById(R.id.toolbar_findcarmap);
@@ -101,6 +115,7 @@ public class FindcarMaps extends AppCompatActivity implements OnMapReadyCallback
         getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
     void startScan(){
+
 //        isBlutoothEnabled();
 //        isLoactonEnabled();
 //     progressDialog.setMessage("Scanning");
@@ -120,10 +135,24 @@ public class FindcarMaps extends AppCompatActivity implements OnMapReadyCallback
                                                    if (ufodevice != null && ufodevice.getDeviceType() == UFODeviceType.EDDYSTONE){
                                                        ufodevice.getProximityUUID();
                                                        //macid.setText(ufodevice.getBtdevice().getAddress());
-                                                       Toast.makeText(FindcarMaps.this, "Car No:211 is NearBy"+ ufodevice.getDistanceInString(), Toast.LENGTH_SHORT).show();
+                                                       NotificationCompat.Builder mBuilder= new NotificationCompat.Builder(FindcarMaps.this);
 
+                                                       Intent i = new Intent(FindcarMaps.this, FindcarMaps.class);
+                                                       PendingIntent pendingIntent= PendingIntent.getActivity(FindcarMaps.this,0,i,0);
 
+                                                       mBuilder.setAutoCancel(true);
+                                                       mBuilder.setDefaults(NotificationCompat.DEFAULT_ALL);
+                                                       mBuilder.setTicker("Ticker");
+                                                       mBuilder.setContentInfo("Distance info");
+                                                       mBuilder.setContentIntent(pendingIntent);
+                                                       mBuilder.setSmallIcon(R.drawable.notification);
+                                                       mBuilder.setContentTitle("Car is Near");
+                                                       mBuilder.setColor(ContextCompat.getColor(FindcarMaps.this, R.color.fulassure));
+                                                       mBuilder.setContentText("Car distance is "+ df2.format(calculateDistance(ufodevice.getTxPower(),ufodevice.getRssi()))+" m");
+                                                       mBuilder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
 
+                                                       NotificationManager notificationManager= (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+                                                       notificationManager.notify(2,mBuilder.build());
                                                    }
 
                                                } });
