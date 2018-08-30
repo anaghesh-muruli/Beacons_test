@@ -229,7 +229,7 @@ public class FindcarMaps extends AppCompatActivity implements OnMapReadyCallback
                     { runOnUiThread(new Runnable() { @Override public void run()
                     {
                         Log.e("Status","Device connection failed");
-                       Toast.makeText(FindcarMaps.this, "Car No: --- is NearBy", Toast.LENGTH_SHORT).show();
+                       Toast.makeText(FindcarMaps.this, "Connection failed", Toast.LENGTH_SHORT).show();
                     }
                     } );}
                 });
