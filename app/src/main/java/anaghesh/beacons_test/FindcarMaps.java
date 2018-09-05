@@ -66,7 +66,7 @@ public class FindcarMaps extends AppCompatActivity implements OnMapReadyCallback
         sharedPreferences = getSharedPreferences("Database", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         ufoBeaconManager = new UFOBeaconManager(this);
-        isLoactonEnabled();
+
 
         navigation.setOnClickListener(new View.OnClickListener() {
             @Override

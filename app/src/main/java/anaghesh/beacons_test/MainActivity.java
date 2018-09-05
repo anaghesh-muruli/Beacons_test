@@ -24,7 +24,7 @@ import com.ufobeaconsdk.main.UFODevice;
 
 @Deprecated
 public class MainActivity extends AppCompatActivity {
-    UFOBeaconManager ufoBeaconManager = new UFOBeaconManager(this);
+    UFOBeaconManager ufoBeaconManager;
     private Button connect;
     private ProgressDialog progressDialog;
     @Override

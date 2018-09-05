@@ -13,14 +13,14 @@
         <fragment
             android:id="@+id/map"
             class="com.google.android.gms.maps.SupportMapFragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="415dp"
+            android:layout_height="634dp"
+            android:layout_marginTop="8dp"
             map:layout_constraintBottom_toBottomOf="parent"
             map:layout_constraintEnd_toEndOf="parent"
             map:layout_constraintHorizontal_bias="0.0"
             map:layout_constraintStart_toStartOf="parent"
-            map:layout_constraintTop_toTopOf="parent"
-            map:layout_constraintVertical_bias="1.0"
+            map:layout_constraintTop_toBottomOf="@+id/appBarLayout"
             tools:context=".Parking" />
 
 
@@ -36,6 +36,7 @@
             map:layout_constraintStart_toStartOf="parent" />
 
         <android.support.design.widget.AppBarLayout
+            android:id="@+id/appBarLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:theme="@style/AppTheme.AppBarOverlay">

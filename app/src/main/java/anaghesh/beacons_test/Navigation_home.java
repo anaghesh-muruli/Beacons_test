@@ -9,6 +9,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,6 +27,9 @@ public class Navigation_home extends AppCompatActivity
         setSupportActionBar(toolbar);
         setupUI();
 
+        Log.e("New thread","Running in background");
+
+        doInBackground();
         //Home page elements
         checkin_img.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,6 +66,18 @@ public class Navigation_home extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+    }
+    void doInBackground(){
+       Thread t1 =  new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                Log.e("Background","Upload to database");
+
+
+            }
+        });
+       t1.start();
     }
     void setupUI(){
         checkin_img = findViewById(R.id.checkin);

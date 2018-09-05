@@ -1,6 +1,7 @@
 package anaghesh.beacons_test;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.IntentSender;
@@ -22,6 +23,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -47,7 +51,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static anaghesh.beacons_test.ScanQR.BEACON_NUM;
 import static anaghesh.beacons_test.ScanQR.VIN_NUM;
@@ -122,6 +131,7 @@ public class Parking extends AppCompatActivity implements OnMapReadyCallback {
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
      */
+    @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mGoogleMap = googleMap;
@@ -131,7 +141,7 @@ public class Parking extends AppCompatActivity implements OnMapReadyCallback {
         mLocationRequest.setInterval(120000); // two minute interval
         mLocationRequest.setFastestInterval(120000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-
+        mGoogleMap.setMyLocationEnabled(true);
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(this,
@@ -354,5 +364,60 @@ public class Parking extends AppCompatActivity implements OnMapReadyCallback {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+    }
+    //Api to POST LatLong
+    private void locationPost() {
+        String Url = "http://admin.fulassure.com:3000/chargestation/rating/add";
+
+        CustomJSONObjectRequest rq = new CustomJSONObjectRequest(Request.Method.POST, Url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("Response Text", response.toString());
+                        try {
+                            if (response.getString("Status").equalsIgnoreCase("Success")) {
+                                int success = Integer.parseInt(response.getString("Code"));
+
+                                if (success == 1) {
+                                   //Alert box
+                                    Toast.makeText(getApplicationContext(), "Successful..!!", Toast.LENGTH_LONG).show();
+
+
+                                } else if (success == 0) {
+                                    Toast.makeText(getApplicationContext(), "Email or Mobile number exits", Toast.LENGTH_LONG).show();
+
+
+                                } else if (success == 2) {
+                                    Toast.makeText(getApplicationContext(), "User exits", Toast.LENGTH_LONG).show();
+
+                                } else {
+                                    Toast.makeText(getApplicationContext(), "Please login to Rate", Toast.LENGTH_LONG).show();
+
+                                }
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("Response Error", error.toString());
+                Toast.makeText(getApplicationContext(), "Please login to Rate", Toast.LENGTH_LONG).show();
+            }
+
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Lat", Lat);
+                params.put("carVIN", Long);
+               // Log.d("params", beacon.getText().toString());
+                return params;
+            }
+        };
+        Singleton.getInstance(getApplicationContext()).addToRequestQueue(rq);
     }
 }

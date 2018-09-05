@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -19,13 +20,22 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 // IMP: Google vision API used. Formats to be controlled
 
@@ -81,23 +91,40 @@ public class ScanQR extends AppCompatActivity {
         assign.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SharedPreferences sharedPreferences = getSharedPreferences("Database", MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString(BEACON_NUM,beacon.getText().toString());
-                editor.putString(VIN_NUM,vin.getText().toString());
-                editor.apply();
-                final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(ScanQR.this);
-                builder.setTitle("Checkin Successful");
-                //  builder.setIcon(R.mipmap.ic_launcher);
-                builder.setMessage("Beacon No. "+sharedPreferences.getString(BEACON_NUM,"")+" is assigned to VIN "+sharedPreferences.getString(VIN_NUM,""))
-                        .setCancelable(false)
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                               finish();
-                            }
-                        });
-                android.app.AlertDialog alert = builder.create();
-                alert.show();
+                if((vin.getText().toString().isEmpty())&&(beacon.getText().toString().isEmpty())){
+                    Toast.makeText(ScanQR.this, "VIN and Beacon cannot be empty", Toast.LENGTH_SHORT).show();
+                }
+                else if(beacon.getText().toString().isEmpty()){
+                    Toast.makeText(ScanQR.this, "Please enter Beacon number", Toast.LENGTH_SHORT).show();
+                }else if(vin.getText().toString().isEmpty()){
+                    Toast.makeText(ScanQR.this, "Please enter VIN", Toast.LENGTH_SHORT).show();
+                }
+               // else if(){
+
+
+               // }
+                else
+                {
+                    assignPost(); //Volley POST to HTTP
+                    SharedPreferences sharedPreferences = getSharedPreferences("Database", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString(BEACON_NUM,beacon.getText().toString());
+                    editor.putString(VIN_NUM,vin.getText().toString());
+                    editor.apply();
+                    final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(ScanQR.this);
+                    builder.setTitle("Checkin Successful");
+                    //  builder.setIcon(R.mipmap.ic_launcher);
+                    builder.setMessage("Beacon No. "+sharedPreferences.getString(BEACON_NUM,"")+" is assigned to VIN "+sharedPreferences.getString(VIN_NUM,""))
+                            .setCancelable(false)
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    finish();
+                                }
+                            });
+                    android.app.AlertDialog alert = builder.create();
+                    alert.show();
+                }
+
 
             }
         });
@@ -194,7 +221,7 @@ public class ScanQR extends AppCompatActivity {
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
 
-                    }
+                              }
                 });
         android.app.AlertDialog alert = builder.create();
         alert.show();
@@ -225,5 +252,63 @@ public class ScanQR extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    private void assignPost() {
+        String Url = "http://admin.fulassure.com:3000/chargestation/rating/add";
+
+        CustomJSONObjectRequest rq = new CustomJSONObjectRequest(Request.Method.POST, Url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("Response Text", response.toString());
+                        try {
+                            if (response.getString("Status").equalsIgnoreCase("Success")) {
+                                int success = Integer.parseInt(response.getString("Code"));
+
+                                if (success == 1) {
+                                    Log.e("Response","1");
+                                    Intent intent = new Intent(ScanQR.this, Navigation_home.class);
+                                    startActivity(intent);
+
+                                    Toast.makeText(getApplicationContext(), "Successful..!!", Toast.LENGTH_LONG).show();
+
+
+                                } else if (success == 0) {
+                                    Toast.makeText(getApplicationContext(), "Email or Mobile number exits", Toast.LENGTH_LONG).show();
+
+
+                                } else if (success == 2) {
+                                    Toast.makeText(getApplicationContext(), "User exits", Toast.LENGTH_LONG).show();
+
+                                } else {
+                                    Toast.makeText(getApplicationContext(), "Please login to Rate", Toast.LENGTH_LONG).show();
+
+                                }
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("Response Error", error.toString());
+                Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_LONG).show();
+            }
+
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("BPubID", beacon.getText().toString());
+                params.put("carVIN", vin.getText().toString());
+                Log.d("params", beacon.getText().toString());
+                Log.d("params", vin.getText().toString());
+                return params;
+            }
+        };
+        Singleton.getInstance(getApplicationContext()).addToRequestQueue(rq);
     }
 }

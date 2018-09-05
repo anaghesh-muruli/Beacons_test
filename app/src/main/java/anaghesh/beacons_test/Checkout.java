@@ -31,8 +31,7 @@ public class Checkout extends AppCompatActivity {
         setContentView(R.layout.activity_checkout);
         toolbarSetup();
         setupUI();
-        sharedpreferences = getSharedPreferences("Database",
-                Context.MODE_PRIVATE); 
+        sharedpreferences = getSharedPreferences("Database", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedpreferences.edit();
 
         search.setOnClickListener(new View.OnClickListener() {
@@ -81,6 +80,7 @@ public class Checkout extends AppCompatActivity {
                         });
                 android.app.AlertDialog alert = builder.create();
                 alert.show();
+
 
             }
         });
