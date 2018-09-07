@@ -26,6 +26,7 @@ import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -79,6 +80,7 @@ public class Parking extends AppCompatActivity implements OnMapReadyCallback {
     private Button confirm;
     public static final String Lat = "curLat";
     public static final String Long = "curLong";
+    public double lat,lng;
     LatLng latLng;
 
     @Override
@@ -103,7 +105,7 @@ public class Parking extends AppCompatActivity implements OnMapReadyCallback {
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                parkingApi();
                 android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(Parking.this);
                 builder.setTitle("Parking Successful");
                 builder.setIcon(R.mipmap.ic_launcher);
@@ -185,8 +187,8 @@ public class Parking extends AppCompatActivity implements OnMapReadyCallback {
                         .icon(icon));
                 mGoogleMap.animateCamera(yourLocation);
                 SharedPreferences.Editor editor = sharedpreferences.edit();
-                editor.putString(Lat,Double.toString(latLng.latitude) );
-                editor.putString(Long,Double.toString(latLng.longitude));
+                lat =latLng.latitude;
+               lng = latLng.longitude;
                 editor.apply();
 
 
@@ -366,55 +368,57 @@ public class Parking extends AppCompatActivity implements OnMapReadyCallback {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
     //Api to POST LatLong
-    private void locationPost() {
-        String Url = "http://admin.fulassure.com:3000/chargestation/rating/add";
+    private void parkingApi() {
 
-        CustomJSONObjectRequest rq = new CustomJSONObjectRequest(Request.Method.POST, Url, null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Log.d("Response Text", response.toString());
-                        try {
-                            if (response.getString("Status").equalsIgnoreCase("Success")) {
-                                int success = Integer.parseInt(response.getString("Code"));
+        String Url = "http://ec2-18-216-80-229.us-east-2.compute.amazonaws.com:3000/becon_car_map/updateParked";
 
-                                if (success == 1) {
-                                   //Alert box
-                                    Toast.makeText(getApplicationContext(), "Successful..!!", Toast.LENGTH_LONG).show();
+        StringRequest rq = new StringRequest(Request.Method.POST, Url , new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
 
+                Log.d("Response Text", response);
+                try {
+                    JSONObject obj = new JSONObject(response);
 
-                                } else if (success == 0) {
-                                    Toast.makeText(getApplicationContext(), "Email or Mobile number exits", Toast.LENGTH_LONG).show();
+                    if (obj.getInt("Code")==1) {
+                        Log.e("Response","1");
 
 
-                                } else if (success == 2) {
-                                    Toast.makeText(getApplicationContext(), "User exits", Toast.LENGTH_LONG).show();
+                    } else if(obj.getInt("Code")==0) {
+                        Log.e("Response","0");
 
-                                } else {
-                                    Toast.makeText(getApplicationContext(), "Please login to Rate", Toast.LENGTH_LONG).show();
-
-                                }
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                        Toast.makeText(Parking.this, "VIN does not exist", Toast.LENGTH_SHORT).show();
                     }
-                }, new Response.ErrorListener() {
+
+                }
+                catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
 
             @Override
             public void onErrorResponse(VolleyError error) {
+
                 Log.d("Response Error", error.toString());
-                Toast.makeText(getApplicationContext(), "Please login to Rate", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_LONG).show();
             }
 
         }) {
 
             @Override
             protected Map<String, String> getParams() {
+                Log.e("Inside","getParams");
+
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("Lat", Lat);
-                params.put("carVIN", Long);
-               // Log.d("params", beacon.getText().toString());
+              //  params.put("CarVIN", vin_result.getText().toString());
+                params.put("CarVIN", "789");
+                Log.e("CarVIN", ""+vin_result.getText().toString());
+                params.put("Latitude", ""+lat);
+                params.put("Longitude", ""+lng);
+               Log.e("Latitude", ""+lat);
+               Log.e("Longitude", ""+lng);
+
                 return params;
             }
         };

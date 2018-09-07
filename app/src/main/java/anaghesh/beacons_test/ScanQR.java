@@ -4,7 +4,6 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -25,11 +24,13 @@ import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -48,6 +49,7 @@ public class ScanQR extends AppCompatActivity {
     Button assign;
     public final static String BEACON_NUM="Beacon_num";
     public final static String VIN_NUM="vin_num";
+    int beaconID, carID;
 
 
     final int RequestCameraPermissionID = 1001;
@@ -99,13 +101,20 @@ public class ScanQR extends AppCompatActivity {
                 }else if(vin.getText().toString().isEmpty()){
                     Toast.makeText(ScanQR.this, "Please enter VIN", Toast.LENGTH_SHORT).show();
                 }
-               // else if(){
-
-
-               // }
                 else
                 {
-                    assignPost(); //Volley POST to HTTP
+                    Thread t1 =  new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        Log.e("Assign thread","Upload to database");
+                        assignApi();
+
+                    }
+                });
+                    t1.start();
+
+                     //Volley POST to HTTP
                     SharedPreferences sharedPreferences = getSharedPreferences("Database", MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putString(BEACON_NUM,beacon.getText().toString());
@@ -253,46 +262,47 @@ public class ScanQR extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-    private void assignPost() {
-        String Url = "http://admin.fulassure.com:3000/chargestation/rating/add";
+    private void assignApi() {
+        String zone;
+        String Url = "http://ec2-18-216-80-229.us-east-2.compute.amazonaws.com:3000/becon/verifyBecon";
 
-        CustomJSONObjectRequest rq = new CustomJSONObjectRequest(Request.Method.POST, Url, null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Log.d("Response Text", response.toString());
-                        try {
-                            if (response.getString("Status").equalsIgnoreCase("Success")) {
-                                int success = Integer.parseInt(response.getString("Code"));
+        StringRequest rq = new StringRequest(Request.Method.POST, Url , new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
 
-                                if (success == 1) {
-                                    Log.e("Response","1");
-                                    Intent intent = new Intent(ScanQR.this, Navigation_home.class);
-                                    startActivity(intent);
+                Log.d("Response Text", response);
+                try {
+                    JSONObject obj = new JSONObject(response);
 
-                                    Toast.makeText(getApplicationContext(), "Successful..!!", Toast.LENGTH_LONG).show();
+                    if (obj.getInt("Code")==1) {
+                        Toast.makeText(ScanQR.this, "Success", Toast.LENGTH_SHORT).show();
+                        JSONArray document = obj.getJSONArray("Document");
+                        Log.e("Response", "1");
+                        for (int i = 0; i < document.length(); i++) {
+                            //getting the json object of the particular index inside the array
+                            JSONObject Object = document.getJSONObject(i);
+                            beaconID = Object.getInt("BeconID");
+                            carID = Object.getInt("CarID");
 
-
-                                } else if (success == 0) {
-                                    Toast.makeText(getApplicationContext(), "Email or Mobile number exits", Toast.LENGTH_LONG).show();
-
-
-                                } else if (success == 2) {
-                                    Toast.makeText(getApplicationContext(), "User exits", Toast.LENGTH_LONG).show();
-
-                                } else {
-                                    Toast.makeText(getApplicationContext(), "Please login to Rate", Toast.LENGTH_LONG).show();
-
-                                }
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
                         }
+                        checkCarApi();
+
+                    } else if(obj.getInt("Code")==0) {
+                        Log.e("Response","0");
+
+                        Toast.makeText(ScanQR.this, "Beacon is not registered", Toast.LENGTH_SHORT).show();
                     }
-                }, new Response.ErrorListener() {
+
+                }
+                catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
 
             @Override
             public void onErrorResponse(VolleyError error) {
+
                 Log.d("Response Error", error.toString());
                 Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_LONG).show();
             }
@@ -301,14 +311,138 @@ public class ScanQR extends AppCompatActivity {
 
             @Override
             protected Map<String, String> getParams() {
+                Log.e("Inside","getParams");
+
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("BPubID", beacon.getText().toString());
-                params.put("carVIN", vin.getText().toString());
-                Log.d("params", beacon.getText().toString());
-                Log.d("params", vin.getText().toString());
+                params.put("BeconPublicID", beacon.getText().toString());
+                Log.d("BeconPublicID", beacon.getText().toString());
+
                 return params;
             }
         };
         Singleton.getInstance(getApplicationContext()).addToRequestQueue(rq);
+    }
+    private void checkCarApi() {
+        String zone;
+        String Url = "http://ec2-18-216-80-229.us-east-2.compute.amazonaws.com:3000/car/verifyCar";
+
+        StringRequest rq = new StringRequest(Request.Method.POST, Url , new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                Log.d("Response Text", response);
+                try {
+                    JSONObject obj = new JSONObject(response);
+
+                    if (obj.getInt("Code")==1) {
+                        JSONArray document = obj.getJSONArray("Document");
+                        Log.e("Response", "1");
+                        addApi();
+
+                    } else if(obj.getInt("Code")==0) {
+                        Log.e("Response","0");
+
+                        Toast.makeText(ScanQR.this, "Error", Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+                catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                Log.d("Response Error", error.toString());
+                Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_LONG).show();
+            }
+
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                Log.e("Inside","getParams");
+
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("CarVIN", vin.getText().toString());
+                Log.d("CarVIN", vin.getText().toString());
+
+                return params;
+            }
+        };
+        Singleton.getInstance(getApplicationContext()).addToRequestQueue(rq);
+    }
+    private void addApi() {
+        String zone;
+        String Url = "http://ec2-18-216-80-229.us-east-2.compute.amazonaws.com:3000/car/verifyCar";
+
+        StringRequest rq = new StringRequest(Request.Method.POST, Url , new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                Log.d("Response Text", response);
+                try {
+                    JSONObject obj = new JSONObject(response);
+
+                    if (obj.getInt("Code")==1) {
+                        JSONArray document = obj.getJSONArray("Document");
+                        Log.e("Response", "1");
+                        for (int i = 0; i < document.length(); i++) {
+                            //getting the json object of the particular index inside the array
+                            JSONObject Object = document.getJSONObject(i);
+                            beaconID = Object.getInt("BeconID");
+                            Toast.makeText(ScanQR.this, "Success", Toast.LENGTH_SHORT).show();
+                        }
+
+                    } else if(obj.getInt("Code")==0) {
+                        Log.e("Response","0");
+
+                        Toast.makeText(ScanQR.this, "Beacon is not registered", Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+                catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                Log.d("Response Error", error.toString());
+                Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_LONG).show();
+            }
+
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                Log.e("Inside","getParams");
+
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("CarID", ""+carID );
+                params.put("BeconID", ""+beaconID);
+               Log.e("CarID", ""+carID );
+               Log.e("BeconID", ""+beaconID);
+
+                return params;
+            }
+        };
+        Singleton.getInstance(getApplicationContext()).addToRequestQueue(rq);
+    }
+    void doInBackground(){
+        Thread t1 =  new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                Log.e("Background","Upload to database");
+
+
+            }
+        });
+        t1.start();
     }
 }

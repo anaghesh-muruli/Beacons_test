@@ -36,10 +36,6 @@ import com.ufobeaconsdk.main.UFODeviceType;
 
 import java.text.DecimalFormat;
 
-import static anaghesh.beacons_test.Parking.Lat;
-import static anaghesh.beacons_test.Parking.sharedpreferences;
-import static anaghesh.beacons_test.ScanQR.VIN_NUM;
-
 //Uses Google maps API and UFO Beacon SDK
 public class FindcarMaps extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -63,23 +59,34 @@ public class FindcarMaps extends AppCompatActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         setupUI();
-        sharedPreferences = getSharedPreferences("Database", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
+//        sharedPreferences = getSharedPreferences("Database", MODE_PRIVATE);
+//        SharedPreferences.Editor editor = sharedPreferences.edit();
         ufoBeaconManager = new UFOBeaconManager(this);
 
+        Intent i= getIntent();
+        Bundle b = i.getExtras();
 
+        if(b!=null)
+        {
+            String bcn =(String) b.get("BeaconPublicID");
+            int vin =(int) b.get("carVIN");
+            vin_result.setText(""+vin);
+            lat = (double) b.get("lat");
+            lng =(double) b.get("lng");
+
+        }
         navigation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.e("Lat", "" + sharedPreferences.getString(Lat, ""));
-                Log.e("Long", "" + sharedPreferences.getString(Parking.Long, ""));
-                String uri = "http://maps.google.com/maps?=" + "&daddr=" + sharedPreferences.getString(Lat, "") + "," + sharedPreferences.getString(Parking.Long, "");
+                Log.e("Lat", "" + lat);
+                Log.e("Long", "" + lng);
+                String uri = "http://maps.google.com/maps?=" + "&daddr=" + lat + "," + lng;
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
                 startActivity(intent);
 
             }
         });
-        vin_result.setText(sharedPreferences.getString(VIN_NUM, ""));
+
     }
 
     void setupUI() {
@@ -93,10 +100,7 @@ public class FindcarMaps extends AppCompatActivity implements OnMapReadyCallback
         BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.car);
 
         mMap = googleMap;
-        String lat11 = sharedpreferences.getString(Lat, "");
-        lat = Double.parseDouble(lat11);
-        String long11 = sharedpreferences.getString(Parking.Long, "");
-        lng = Double.parseDouble(long11);
+
         // Add a marker in Sydney and move the camera
         latLng = new LatLng(lat, lng);
         mMap.addMarker(new MarkerOptions()
