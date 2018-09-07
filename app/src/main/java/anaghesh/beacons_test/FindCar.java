@@ -30,6 +30,7 @@ public class FindCar extends AppCompatActivity {
     public String BeaconPublicID;
     public int carVIN;
     public double lat,lng;
+    String zone;
     public static SharedPreferences sharedpreferences;
 
 
@@ -71,7 +72,6 @@ public class FindCar extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "This Car Number is Not Assigned", Toast.LENGTH_SHORT).show();
     }
     private void FindcarAPI() {
-        String zone;
         String Url = "http://ec2-18-216-80-229.us-east-2.compute.amazonaws.com:3000/car/findCarWithCarVIN";
 
         StringRequest rq = new StringRequest(Request.Method.POST, Url , new Response.Listener<String>() {
@@ -81,16 +81,23 @@ public class FindCar extends AppCompatActivity {
                 Log.d("Response Text", response);
                 try {
                     JSONObject obj = new JSONObject(response);
-                    JSONArray document = obj.getJSONArray("Document");
+
                     if (obj.getInt("Code")==1) {
+                        JSONArray document = obj.getJSONArray("Document");
                         Log.e("Response", "1");
                         for (int i = 0; i < document.length(); i++) {
                             //getting the json object of the particular index inside the array
                             JSONObject Object = document.getJSONObject(i);
                             BeaconPublicID = Object.getString("BeconPublicID");
                             carVIN = Object.getInt("CarVIN");
-                            lat = Object.getInt("Latitude");
-                            lng = Object.getInt("Longitude");
+                            lat = Object.getDouble("Latitude");
+                            lng = Object.getDouble("Longitude");
+                            zone = Object.getString("PzName");
+                            Log.e("lat in FC",""+lat);
+                            Log.e("Long in FC",""+lng);
+                            Log.e("zone in FC",""+zone);
+
+
 
 
                         }
@@ -99,6 +106,7 @@ public class FindCar extends AppCompatActivity {
                         i.putExtra("carVIN",carVIN);
                         i.putExtra("lat",lat);
                         i.putExtra("lng",lng);
+                        i.putExtra("pzName",zone);
                         startActivity(i);
                     } else if(obj.getInt("Code")==0) {
                         Log.e("Response","0");

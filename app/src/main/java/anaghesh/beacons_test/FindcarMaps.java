@@ -62,6 +62,7 @@ public class FindcarMaps extends AppCompatActivity implements OnMapReadyCallback
 //        sharedPreferences = getSharedPreferences("Database", MODE_PRIVATE);
 //        SharedPreferences.Editor editor = sharedPreferences.edit();
         ufoBeaconManager = new UFOBeaconManager(this);
+        isBlutoothEnabled();
 
         Intent i= getIntent();
         Bundle b = i.getExtras();
@@ -73,6 +74,13 @@ public class FindcarMaps extends AppCompatActivity implements OnMapReadyCallback
             vin_result.setText(""+vin);
             lat = (double) b.get("lat");
             lng =(double) b.get("lng");
+            String zone =(String) b.get("pzName");
+            zone_result.setText(""+zone);
+            Log.e("Lat",""+lat);
+            Log.e("Long",""+lng);
+            Log.e("Zone",""+zone);
+
+
 
         }
         navigation.setOnClickListener(new View.OnClickListener() {
@@ -203,7 +211,6 @@ public class FindcarMaps extends AppCompatActivity implements OnMapReadyCallback
         ufoBeaconManager.isLocationServiceEnabled(new OnSuccessListener()
         { @Override public void onSuccess(boolean isSuccess) {
             if(isSuccess){
-                isBlutoothEnabled();
             }
         } }, new OnFailureListener() { @Override public void onFailure(int code, String message) {
             Toast.makeText(FindcarMaps.this, "Enbale location service", Toast.LENGTH_SHORT).show();

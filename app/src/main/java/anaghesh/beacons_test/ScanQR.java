@@ -50,6 +50,7 @@ public class ScanQR extends AppCompatActivity {
     public final static String BEACON_NUM="Beacon_num";
     public final static String VIN_NUM="vin_num";
     int beaconID, carID;
+    boolean flag;
 
 
     final int RequestCameraPermissionID = 1001;
@@ -115,23 +116,8 @@ public class ScanQR extends AppCompatActivity {
                     t1.start();
 
                      //Volley POST to HTTP
-                    SharedPreferences sharedPreferences = getSharedPreferences("Database", MODE_PRIVATE);
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString(BEACON_NUM,beacon.getText().toString());
-                    editor.putString(VIN_NUM,vin.getText().toString());
-                    editor.apply();
-                    final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(ScanQR.this);
-                    builder.setTitle("Checkin Successful");
-                    //  builder.setIcon(R.mipmap.ic_launcher);
-                    builder.setMessage("Beacon No. "+sharedPreferences.getString(BEACON_NUM,"")+" is assigned to VIN "+sharedPreferences.getString(VIN_NUM,""))
-                            .setCancelable(false)
-                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    finish();
-                                }
-                            });
-                    android.app.AlertDialog alert = builder.create();
-                    alert.show();
+
+
                 }
 
 
@@ -145,7 +131,7 @@ public class ScanQR extends AppCompatActivity {
                 .setRequestedPreviewSize(640, 480)
                 .build();
         //Add Event
-        alert();
+        //alert();
         cameraPreview.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
             public void surfaceCreated(SurfaceHolder surfaceHolder) {
@@ -197,10 +183,17 @@ public class ScanQR extends AppCompatActivity {
 
                             if(beacon.getText().toString().isEmpty()) {
                                 beacon.setText(qrcodes.valueAt(0).displayValue);
-                                vinAlert();
+                                //vinAlert();
+                                restartCamera();
                             }
                             else {
-                                vin.setText(qrcodes.valueAt(0).displayValue);
+                                String s = qrcodes.valueAt(0).displayValue;
+                                if(!(s.equalsIgnoreCase(beacon.getText().toString())))
+                                vin.setText(s);
+                                else{
+                                    Toast.makeText(ScanQR.this, "Please scan vehicle barcode", Toast.LENGTH_SHORT).show();
+                                    restartCamera();
+                                }
                             }
                             Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                             vibrator.vibrate(100);
@@ -275,14 +268,14 @@ public class ScanQR extends AppCompatActivity {
                     JSONObject obj = new JSONObject(response);
 
                     if (obj.getInt("Code")==1) {
-                        Toast.makeText(ScanQR.this, "Success", Toast.LENGTH_SHORT).show();
                         JSONArray document = obj.getJSONArray("Document");
                         Log.e("Response", "1");
+                        Log.e("Inside","assignAPI");
                         for (int i = 0; i < document.length(); i++) {
                             //getting the json object of the particular index inside the array
                             JSONObject Object = document.getJSONObject(i);
                             beaconID = Object.getInt("BeconID");
-                            carID = Object.getInt("CarID");
+                            Log.e("BeaconID",""+beaconID);
 
                         }
                         checkCarApi();
@@ -337,14 +330,21 @@ public class ScanQR extends AppCompatActivity {
                     if (obj.getInt("Code")==1) {
                         JSONArray document = obj.getJSONArray("Document");
                         Log.e("Response", "1");
+                        Log.e("Inside","checkCar");
+                        for (int i = 0; i < document.length(); i++) {
+                            //getting the json object of the particular index inside the array
+                            JSONObject Object = document.getJSONObject(i);
+                            carID = Object.getInt("CarID");
+                            Log.e("BeaconID",""+carID);
+
+                        }
                         addApi();
 
                     } else if(obj.getInt("Code")==0) {
                         Log.e("Response","0");
 
-                        Toast.makeText(ScanQR.this, "Error", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ScanQR.this, "Vehicle is not registered", Toast.LENGTH_SHORT).show();
                     }
-
                 }
                 catch (JSONException e) {
                     e.printStackTrace();
@@ -376,7 +376,7 @@ public class ScanQR extends AppCompatActivity {
     }
     private void addApi() {
         String zone;
-        String Url = "http://ec2-18-216-80-229.us-east-2.compute.amazonaws.com:3000/car/verifyCar";
+        String Url = "http://ec2-18-216-80-229.us-east-2.compute.amazonaws.com:3000/becon_car_map/add";
 
         StringRequest rq = new StringRequest(Request.Method.POST, Url , new Response.Listener<String>() {
             @Override
@@ -387,19 +387,28 @@ public class ScanQR extends AppCompatActivity {
                     JSONObject obj = new JSONObject(response);
 
                     if (obj.getInt("Code")==1) {
-                        JSONArray document = obj.getJSONArray("Document");
-                        Log.e("Response", "1");
-                        for (int i = 0; i < document.length(); i++) {
-                            //getting the json object of the particular index inside the array
-                            JSONObject Object = document.getJSONObject(i);
-                            beaconID = Object.getInt("BeconID");
-                            Toast.makeText(ScanQR.this, "Success", Toast.LENGTH_SHORT).show();
-                        }
+                        SharedPreferences sharedPreferences = getSharedPreferences("Database", MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString(BEACON_NUM,beacon.getText().toString());
+                        editor.putString(VIN_NUM,vin.getText().toString());
+                        editor.apply();
+                        final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(ScanQR.this);
+                        builder.setTitle("Checkin Successful");
+                        //  builder.setIcon(R.mipmap.ic_launcher);
+                        builder.setMessage("Beacon No. "+sharedPreferences.getString(BEACON_NUM,"")+" is assigned to VIN "+sharedPreferences.getString(VIN_NUM,""))
+                                .setCancelable(false)
+                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        finish();
+                                    }
+                                });
+                        android.app.AlertDialog alert = builder.create();
+                        alert.show();
 
                     } else if(obj.getInt("Code")==0) {
                         Log.e("Response","0");
 
-                        Toast.makeText(ScanQR.this, "Beacon is not registered", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ScanQR.this, "Beacon-Car already assigned", Toast.LENGTH_SHORT).show();
                     }
 
                 }
@@ -433,16 +442,5 @@ public class ScanQR extends AppCompatActivity {
         };
         Singleton.getInstance(getApplicationContext()).addToRequestQueue(rq);
     }
-    void doInBackground(){
-        Thread t1 =  new Thread(new Runnable() {
-            @Override
-            public void run() {
-
-                Log.e("Background","Upload to database");
-
-
-            }
-        });
-        t1.start();
-    }
+ 
 }

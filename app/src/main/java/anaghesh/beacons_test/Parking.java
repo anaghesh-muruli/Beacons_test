@@ -412,7 +412,7 @@ public class Parking extends AppCompatActivity implements OnMapReadyCallback {
 
                 Map<String, String> params = new HashMap<String, String>();
               //  params.put("CarVIN", vin_result.getText().toString());
-                params.put("CarVIN", "789");
+                params.put("CarVIN", ""+vin_result.getText().toString());
                 Log.e("CarVIN", ""+vin_result.getText().toString());
                 params.put("Latitude", ""+lat);
                 params.put("Longitude", ""+lng);
