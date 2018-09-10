@@ -143,7 +143,7 @@ public class Parking extends AppCompatActivity implements OnMapReadyCallback {
         mLocationRequest.setInterval(120000); // two minute interval
         mLocationRequest.setFastestInterval(120000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-        mGoogleMap.setMyLocationEnabled(true);
+
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(this,
@@ -412,7 +412,7 @@ public class Parking extends AppCompatActivity implements OnMapReadyCallback {
 
                 Map<String, String> params = new HashMap<String, String>();
               //  params.put("CarVIN", vin_result.getText().toString());
-                params.put("CarVIN", ""+vin_result.getText().toString());
+                params.put("CarVIN", ""+vin_result.getText());
                 Log.e("CarVIN", ""+vin_result.getText().toString());
                 params.put("Latitude", ""+lat);
                 params.put("Longitude", ""+lng);

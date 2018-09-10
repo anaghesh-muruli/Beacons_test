@@ -160,7 +160,7 @@ public class Checkout extends AppCompatActivity {
                 Log.d("Response Text", response);
                 try {
                     JSONObject obj = new JSONObject(response);
-                    JSONArray document = obj.getJSONArray("Document");
+
                     if (obj.getInt("Code")==1) {
                         Log.e("Response","1");
                         Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
@@ -182,7 +182,7 @@ public class Checkout extends AppCompatActivity {
 
 
                     } else {
-                        Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Checkout unsuccessful", Toast.LENGTH_LONG).show();
 
                     }
 
@@ -196,7 +196,7 @@ public class Checkout extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d("Response Error", error.toString());
-                Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "No internet connection", Toast.LENGTH_LONG).show();
             }
 
         }) {

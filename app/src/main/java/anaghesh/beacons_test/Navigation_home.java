@@ -19,6 +19,7 @@ import android.widget.Toast;
 public class Navigation_home extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private ImageView checkin_img, park, findcar, checkout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -134,9 +135,7 @@ public class Navigation_home extends AppCompatActivity
 
         if (id == R.id.nav_camera) {
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
+        }  else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {
 

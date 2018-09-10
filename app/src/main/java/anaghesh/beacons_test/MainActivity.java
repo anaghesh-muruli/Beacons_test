@@ -14,12 +14,7 @@ import com.ufobeaconsdk.callback.OnScanSuccessListener;
 import com.ufobeaconsdk.callback.OnSuccessListener;
 import com.ufobeaconsdk.main.UFOBeaconManager;
 import com.ufobeaconsdk.main.UFODevice;
-     /* created by Anaghesh Muruli on 14-08-2018
-      * github repo: Beacons_test
-      * Added dependency from UFO Beacon SDK
-      *
-      *
-      * IMP: This activity is deprecated */
+
 
 
 @Deprecated

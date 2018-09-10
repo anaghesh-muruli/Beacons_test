@@ -12,6 +12,8 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
@@ -19,6 +21,8 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -47,11 +51,15 @@ public class ScanQR extends AppCompatActivity {
     BarcodeDetector barcodeDetector;
     CameraSource cameraSource;
     Button assign;
+    private TextView scanInfo;
     public final static String BEACON_NUM="Beacon_num";
     public final static String VIN_NUM="vin_num";
     int beaconID, carID;
-    boolean flag;
-
+    private ImageView bcnVerify, vinVerify;
+    TextWatcher textWatcher = null;
+    TextWatcher textWatcher1 = null;
+    boolean flag = false;
+    boolean flag1 = false;
 
     final int RequestCameraPermissionID = 1001;
 
@@ -87,10 +95,51 @@ public class ScanQR extends AppCompatActivity {
         Log.e("error",""+cameraPreview);
         beacon = findViewById(R.id.beacon_edittext);
         beacon.setText("");//test
-
         vin = findViewById(R.id.vin_edittext);
         vin.setText("");//test
         assign = findViewById(R.id.assign);
+        bcnVerify = findViewById(R.id.bcn_verify);
+        vinVerify = findViewById(R.id.vin_verify);
+        scanInfo = findViewById(R.id.scan_info);
+
+
+        textWatcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                checkBeaconApi();
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        };
+        beacon.addTextChangedListener(textWatcher);
+
+        textWatcher1 = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                checkCarApi();
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        };
+        vin.addTextChangedListener(textWatcher1);
+
         assign.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -109,8 +158,9 @@ public class ScanQR extends AppCompatActivity {
                     public void run() {
 
                         Log.e("Assign thread","Upload to database");
-                        assignApi();
-
+                        if(flag1 && flag){
+                            addApi();
+                        }
                     }
                 });
                     t1.start();
@@ -182,21 +232,25 @@ public class ScanQR extends AppCompatActivity {
                             Log.e("VIN ",""+vin.getText().toString());
 
                             if(beacon.getText().toString().isEmpty()) {
+                                Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                                vibrator.vibrate(100);
                                 beacon.setText(qrcodes.valueAt(0).displayValue);
                                 //vinAlert();
                                 restartCamera();
                             }
                             else {
                                 String s = qrcodes.valueAt(0).displayValue;
-                                if(!(s.equalsIgnoreCase(beacon.getText().toString())))
+                                if(!(s.equalsIgnoreCase(beacon.getText().toString()))){
+                                    Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                                    vibrator.vibrate(100);
                                 vin.setText(s);
+                                }
                                 else{
                                     Toast.makeText(ScanQR.this, "Please scan vehicle barcode", Toast.LENGTH_SHORT).show();
                                     restartCamera();
                                 }
                             }
-                            Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-                            vibrator.vibrate(100);
+
 
 
                         }
@@ -255,7 +309,8 @@ public class ScanQR extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-    private void assignApi() {
+    private void checkBeaconApi() {
+        scanInfo.setText("Please scan car barcode");
         String zone;
         String Url = "http://ec2-18-216-80-229.us-east-2.compute.amazonaws.com:3000/becon/verifyBecon";
 
@@ -270,6 +325,9 @@ public class ScanQR extends AppCompatActivity {
                     if (obj.getInt("Code")==1) {
                         JSONArray document = obj.getJSONArray("Document");
                         Log.e("Response", "1");
+                        flag = true;
+                        bcnVerify.setImageDrawable(getDrawable(R.drawable.tick));
+                        bcnVerify.setVisibility(View.VISIBLE);
                         Log.e("Inside","assignAPI");
                         for (int i = 0; i < document.length(); i++) {
                             //getting the json object of the particular index inside the array
@@ -278,12 +336,12 @@ public class ScanQR extends AppCompatActivity {
                             Log.e("BeaconID",""+beaconID);
 
                         }
-                        checkCarApi();
+
 
                     } else if(obj.getInt("Code")==0) {
                         Log.e("Response","0");
-
-                        Toast.makeText(ScanQR.this, "Beacon is not registered", Toast.LENGTH_SHORT).show();
+                        bcnVerify.setVisibility(View.INVISIBLE);
+                    //    Toast.makeText(ScanQR.this, "Beacon is not registered", Toast.LENGTH_SHORT).show();
                     }
 
                 }
@@ -316,6 +374,9 @@ public class ScanQR extends AppCompatActivity {
         Singleton.getInstance(getApplicationContext()).addToRequestQueue(rq);
     }
     private void checkCarApi() {
+      if(!(beacon.getText().toString().isEmpty())&& (!(vin.getText().toString().isEmpty()))){
+          scanInfo.setVisibility(View.INVISIBLE);
+      }
         String zone;
         String Url = "http://ec2-18-216-80-229.us-east-2.compute.amazonaws.com:3000/car/verifyCar";
 
@@ -331,6 +392,9 @@ public class ScanQR extends AppCompatActivity {
                         JSONArray document = obj.getJSONArray("Document");
                         Log.e("Response", "1");
                         Log.e("Inside","checkCar");
+                        flag1 =true;
+                        vinVerify.setImageDrawable(getDrawable(R.drawable.tick));
+                        vinVerify.setVisibility(View.VISIBLE);
                         for (int i = 0; i < document.length(); i++) {
                             //getting the json object of the particular index inside the array
                             JSONObject Object = document.getJSONObject(i);
@@ -338,12 +402,12 @@ public class ScanQR extends AppCompatActivity {
                             Log.e("BeaconID",""+carID);
 
                         }
-                        addApi();
+
 
                     } else if(obj.getInt("Code")==0) {
                         Log.e("Response","0");
-
-                        Toast.makeText(ScanQR.this, "Vehicle is not registered", Toast.LENGTH_SHORT).show();
+                        vinVerify.setVisibility(View.INVISIBLE);
+                       // Toast.makeText(ScanQR.this, "Vehicle is not registered", Toast.LENGTH_SHORT).show();
                     }
                 }
                 catch (JSONException e) {
@@ -407,7 +471,6 @@ public class ScanQR extends AppCompatActivity {
 
                     } else if(obj.getInt("Code")==0) {
                         Log.e("Response","0");
-
                         Toast.makeText(ScanQR.this, "Beacon-Car already assigned", Toast.LENGTH_SHORT).show();
                     }
 
