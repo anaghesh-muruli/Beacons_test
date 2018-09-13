@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -33,6 +34,7 @@ import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
+import com.ufobeaconsdk.main.UFODevice;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -45,6 +47,7 @@ import java.util.Map;
 // IMP: Google vision API used. Formats to be controlled
 
 public class ScanQR extends AppCompatActivity {
+    private UFODevice ufoDevice;
 
     SurfaceView cameraPreview;
     EditText beacon,vin;
@@ -60,7 +63,7 @@ public class ScanQR extends AppCompatActivity {
     TextWatcher textWatcher1 = null;
     boolean flag = false;
     boolean flag1 = false;
-
+    public static String Macid;
     final int RequestCameraPermissionID = 1001;
 
 
@@ -246,7 +249,7 @@ public class ScanQR extends AppCompatActivity {
                                 vin.setText(s);
                                 }
                                 else{
-                                    Toast.makeText(ScanQR.this, "Please scan vehicle barcode", Toast.LENGTH_SHORT).show();
+                                 //   Toast.makeText(ScanQR.this, "Please scan vehicle barcode", Toast.LENGTH_SHORT).show();
                                     restartCamera();
                                 }
                             }
@@ -326,9 +329,9 @@ public class ScanQR extends AppCompatActivity {
                         JSONArray document = obj.getJSONArray("Document");
                         Log.e("Response", "1");
                         flag = true;
-                        bcnVerify.setImageDrawable(getDrawable(R.drawable.tick));
+                        bcnVerify.setImageDrawable(getDrawable(R.drawable.greentick));
                         bcnVerify.setVisibility(View.VISIBLE);
-                        Log.e("Inside","assignAPI");
+                        Log.e("Inside","checkBeaconAPI");
                         for (int i = 0; i < document.length(); i++) {
                             //getting the json object of the particular index inside the array
                             JSONObject Object = document.getJSONObject(i);
@@ -393,7 +396,7 @@ public class ScanQR extends AppCompatActivity {
                         Log.e("Response", "1");
                         Log.e("Inside","checkCar");
                         flag1 =true;
-                        vinVerify.setImageDrawable(getDrawable(R.drawable.tick));
+                        vinVerify.setImageDrawable(getDrawable(R.drawable.greentick));
                         vinVerify.setVisibility(View.VISIBLE);
                         for (int i = 0; i < document.length(); i++) {
                             //getting the json object of the particular index inside the array
@@ -451,6 +454,13 @@ public class ScanQR extends AppCompatActivity {
                     JSONObject obj = new JSONObject(response);
 
                     if (obj.getInt("Code")==1) {
+                        JSONArray document = obj.getJSONArray("Document");
+                        for (int i = 0; i < document.length(); i++) {
+                            //getting the json object of the particular index inside the array
+                            JSONObject Object = document.getJSONObject(i);
+                            Macid= Object.getString("BeconMacID");
+
+                        }
                         SharedPreferences sharedPreferences = getSharedPreferences("Database", MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.putString(BEACON_NUM,beacon.getText().toString());
@@ -463,7 +473,7 @@ public class ScanQR extends AppCompatActivity {
                                 .setCancelable(false)
                                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
-                                        finish();
+                                        startActivity(new Intent(ScanQR.this, Navigation_home.class));
                                     }
                                 });
                         android.app.AlertDialog alert = builder.create();
@@ -505,5 +515,6 @@ public class ScanQR extends AppCompatActivity {
         };
         Singleton.getInstance(getApplicationContext()).addToRequestQueue(rq);
     }
+
  
 }

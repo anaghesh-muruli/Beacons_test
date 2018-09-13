@@ -1,9 +1,19 @@
 package anaghesh.beacons_test;
 
 import android.bluetooth.BluetoothAdapter;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -16,10 +26,38 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-public class Navigation_home extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
-    private ImageView checkin_img, park, findcar, checkout;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.ufobeaconsdk.callback.OnConnectSuccessListener;
+import com.ufobeaconsdk.callback.OnFailureListener;
+import com.ufobeaconsdk.callback.OnScanSuccessListener;
+import com.ufobeaconsdk.callback.OnSuccessListener;
+import com.ufobeaconsdk.main.UFOBeaconManager;
+import com.ufobeaconsdk.main.UFODevice;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import static anaghesh.beacons_test.ScanQR.VIN_NUM;
+
+public class Navigation_home extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener, LocationListener {
+    private ImageView checkin_img, park, findcar, checkout;
+    private UFODevice ufoDevice;
+    LocationManager locationManager;
+    public static  SharedPreferences sharedpreferences;
+    public static SharedPreferences sharedPreferences;
+    String vinNum;
+    private double lat, lng;
+    private UFOBeaconManager ufoBeaconManager;
+    ScanQR s1 = new ScanQR();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,10 +65,25 @@ public class Navigation_home extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setupUI();
+        Log.e("Activity","Navigation_home");
+        sharedPreferences = getSharedPreferences("Database", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        sharedpreferences = getSharedPreferences("Database", Context.MODE_PRIVATE);
+         vinNum =  sharedPreferences.getString(VIN_NUM, "");
 
-        Log.e("New thread","Running in background");
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
-        doInBackground();
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION}, 101);
+
+        }
+
+
+        Log.e("Beacon Macid",""+ScanQR.Macid);
+        ufoBeaconManager = new UFOBeaconManager(this);
+        if(ScanQR.Macid!=null)
+            isBlutoothEnabled();
+
+       // doInBackground();
         //Home page elements
         checkin_img.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,7 +126,9 @@ public class Navigation_home extends AppCompatActivity
             @Override
             public void run() {
 
-                Log.e("Background","Upload to database");
+                Log.e("Beacon scan thread","Running");
+                isBlutoothEnabled();
+
 
 
             }
@@ -148,5 +203,253 @@ public class Navigation_home extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+    void startScan(){
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+//        isBlutoothEnabled();
+//        isLoactonEnabled();
+//     progressDialog.setMessage("Scanning");
+//     progressDialog.show();
+
+        Log.e("Method","startScan");
+        ufoBeaconManager.startScan(new OnScanSuccessListener()
+                                   {
+                                       @Override public void onSuccess(final UFODevice ufodevice) {
+                                           runOnUiThread(new Runnable() {
+                                               @Override public void run(){
+                                                   Log.e("Inside","onSuccess");
+
+
+                                                   // connect_beacons(ufodevice);
+                                                   String s = ufodevice.getBtdevice().getAddress();
+                                                   Log.e("MacId",""+ufodevice.getBtdevice().getAddress());
+                                                   if(s.equalsIgnoreCase(ScanQR.Macid)){
+                                                       Log.e("Connected to",ScanQR.Macid);
+                                                       getLocation();
+                                                       Log.e("Latitude", ""+lat);
+                                                       Log.e("Longitude", ""+lng);
+                                                       Log.e("CarVIN", ""+vinNum);
+                                                       locationLogApi();
+
+                                                   }
+
+                                               } });
+                                       }
+                                   }, new OnFailureListener() { @Override public void onFailure(final int code, final String message)
+                                   { runOnUiThread(new Runnable() { @Override public void run() {
+                                       Log.e("Inside","onfailure");
+
+                                       //progressDialog.dismiss();
+                                       Toast.makeText(Navigation_home.this, "No device found", Toast.LENGTH_SHORT).show();
+                                       //Update UI
+
+                                   } }); }
+                                   }
+        );
+    }
+    void stopScan(){
+
+        Log.e("Method","stopScan");
+        ufoBeaconManager.stopScan(new OnSuccessListener()
+                                  { @Override public void onSuccess(boolean isStop) { runOnUiThread(new Runnable() { @Override public void run() {
+                                      Toast.makeText(Navigation_home.this, "Scan stopped", Toast.LENGTH_SHORT).show();
+                                      //update UI
+                                  } }); } },
+                new OnFailureListener() { @Override public void onFailure(final int code, final String message)
+                { runOnUiThread(new Runnable() { @Override public void run() {
+                    Toast.makeText(Navigation_home.this, "Scan could not be stopped", Toast.LENGTH_SHORT).show();            } }); } });
+
+    }
+    void isBlutoothEnabled(){
+        Log.e("Method","isbluoothEnabled");
+        ufoBeaconManager.isBluetoothEnabled(new OnSuccessListener() { @Override public void onSuccess(boolean isSuccess)
+        {
+            if(isSuccess){
+                startScan();
+            }
+        } }, new OnFailureListener() { @Override public void onFailure(int code, String message) {
+            Toast.makeText(Navigation_home.this, "Please enable bluetooth from settings", Toast.LENGTH_SHORT).show();
+        } });
+    }
+
+    void isLoactonEnabled(){
+        Log.e("Method","isLocationEnabled");
+        ufoBeaconManager.isLocationServiceEnabled(new OnSuccessListener()
+        { @Override public void onSuccess(boolean isSuccess) {
+            if(isSuccess){
+                isBlutoothEnabled();
+            }
+        } }, new OnFailureListener() { @Override public void onFailure(int code, String message) {
+            Toast.makeText(Navigation_home.this, "Enbale location service", Toast.LENGTH_SHORT).show();
+        } });
+    }
+
+    void connect_beacons(UFODevice ufodevice){
+        Log.e("method","connect_beacons");
+        Log.e("Beacon dist",""+ufodevice.getDistanceInString());
+        Log.e("Beacon dist",""+ufodevice.getDistance());
+        Log.e("Beacon voltage",""+ufodevice.getEddystoneTLMBatteryVoltage());
+        Log.e("Beacon",""+ufodevice.getDeviceType());
+        Log.e("ID",""+ufodevice.getModelId());
+        Log.e("Beacon Rssi",""+ufodevice.getRssi());
+        Log.e("uuid",""+ufodevice.getProximityUUID());
+        Log.e("MacId",""+ufodevice.getBtdevice().getAddress());
+
+
+        for(int i = 1;i<11;i++){
+            Log.e("Beacon Rssi",""+ufodevice.getRssi());
+            if((ufodevice.getRssi())>-85){
+                Log.e("Latlong"+i,"To database");
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+        }
+
+        Log.e("Dist",""+calculateDistance(ufodevice.getTxPower(),ufodevice.getRssi()));
+        ufodevice.connect(new OnConnectSuccessListener()
+                          { @Override public void onSuccess(UFODevice ufoDevice)
+                          {   Log.e("Status","Device connected");
+
+                              stopScan();
+                              Toast.makeText(Navigation_home.this, "Device connected", Toast.LENGTH_SHORT).show();
+                          } },
+                new OnFailureListener() {
+                    @Override public void onFailure(final int code, final String message)
+                    { runOnUiThread(new Runnable() { @Override public void run()
+                    {
+                        Log.e("Status","Device connection failed");
+                        Toast.makeText(Navigation_home.this, "Connection failed", Toast.LENGTH_SHORT).show();
+                    }
+                    } );}
+                });
+        Log.e("Device connect","Ended");
+    }
+    protected static double calculateDistance(int txPower, int rssi) {
+        if (rssi == 0) {
+            return -1.0; // if we cannot determine distance, return -1.
+        }
+
+        double ratio = rssi*1.0/txPower;
+        if (ratio < 1.0) {
+            return Math.pow(ratio,10);
+        }
+        else {
+            double accuracy =  (0.89976)*Math.pow(ratio,7.7095) + 0.111;
+            return accuracy;
+        }
+    }
+    private void locationLogApi() {
+
+        String Url = "http://ec2-18-216-80-229.us-east-2.compute.amazonaws.com:3000/location_log/add";
+
+        StringRequest rq = new StringRequest(Request.Method.POST, Url , new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                Log.d("Response Text", response);
+                try {
+                    JSONObject obj = new JSONObject(response);
+
+                    if (obj.getInt("Code")==1) {
+                        Log.e("Response","1");
+
+
+                    } else if(obj.getInt("Code")==0) {
+                        Log.e("Response","0");
+
+                      //  Toast.makeText(Parking.this, "VIN does not exist", Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+                catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                Log.d("Response Error", error.toString());
+                Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_LONG).show();
+            }
+
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                Log.e("Inside","getParams");
+
+                Map<String, String> params = new HashMap<String, String>();
+                //  params.put("CarVIN", vin_result.getText().toString());
+
+                params.put("CarVIN", ""+vinNum);
+                Log.e("CarVIN", ""+vinNum);
+                params.put("Latitude", ""+lat);
+                params.put("Longitude", ""+lng);
+                Log.e("Latitude", ""+lat);
+                Log.e("Longitude", ""+lng);
+
+                return params;
+            }
+        };
+        Singleton.getInstance(getApplicationContext()).addToRequestQueue(rq);
+    }
+
+
+    void getLocation() {
+        Log.e("getLocation","called");
+        try {
+            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 5, this);
+        }
+        catch(SecurityException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        lat = location.getLatitude();
+        lng = location.getLongitude();
+
+        try {
+            Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+            List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+            lat = location.getLatitude();
+            lng = location.getLongitude();
+//            locationText.setText(locationText.getText() + "\n"+addresses.get(0).getAddressLine(0)+", "+
+//                    addresses.get(0).getAddressLine(1)+", "+addresses.get(0).getAddressLine(2));
+        }catch(Exception e)
+        {
+
+        }
+
+    }
+
+    @Override
+    public void onStatusChanged(String s, int i, Bundle bundle) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String s) {
+        Toast.makeText(Navigation_home.this, "Please Enable GPS and Internet", Toast.LENGTH_SHORT).show();
+
+    }
+
+    @Override
+    public void onProviderDisabled(String s) {
+
     }
 }

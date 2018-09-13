@@ -98,26 +98,14 @@ public class Parking extends AppCompatActivity implements OnMapReadyCallback {
         bcn_result = findViewById(R.id.bcn_res);
         sharedPreferences = getSharedPreferences("Database", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        sharedpreferences = getSharedPreferences("Database",
-                Context.MODE_PRIVATE);
+        sharedpreferences = getSharedPreferences("Database", Context.MODE_PRIVATE);
         vin_result.setText(sharedPreferences.getString(VIN_NUM, ""));
         bcn_result.setText(sharedPreferences.getString(BEACON_NUM, ""));
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 parkingApi();
-                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(Parking.this);
-                builder.setTitle("Parking Successful");
-                builder.setIcon(R.mipmap.ic_launcher);
-                builder.setMessage("The vehicle has been parked successfully")
-                        .setCancelable(false)
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                finish();
-                            }
-                        });
-                android.app.AlertDialog alert = builder.create();
-                alert.show();
+
             }
         });
 
@@ -382,7 +370,18 @@ public class Parking extends AppCompatActivity implements OnMapReadyCallback {
 
                     if (obj.getInt("Code")==1) {
                         Log.e("Response","1");
-
+                        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(Parking.this);
+                        builder.setTitle("Parking Successful");
+                        builder.setIcon(R.mipmap.ic_launcher);
+                        builder.setMessage("The vehicle has been parked successfully")
+                                .setCancelable(false)
+                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        finish();
+                                    }
+                                });
+                        android.app.AlertDialog alert = builder.create();
+                        alert.show();
 
                     } else if(obj.getInt("Code")==0) {
                         Log.e("Response","0");
@@ -401,7 +400,7 @@ public class Parking extends AppCompatActivity implements OnMapReadyCallback {
             public void onErrorResponse(VolleyError error) {
 
                 Log.d("Response Error", error.toString());
-                Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Network Error", Toast.LENGTH_LONG).show();
             }
 
         }) {
@@ -416,7 +415,8 @@ public class Parking extends AppCompatActivity implements OnMapReadyCallback {
                 Log.e("CarVIN", ""+vin_result.getText().toString());
                 params.put("Latitude", ""+lat);
                 params.put("Longitude", ""+lng);
-               Log.e("Latitude", ""+lat);
+                params.put("MappingUpdatedBy", ""+123);
+                Log.e("Latitude", ""+lat);
                Log.e("Longitude", ""+lng);
 
                 return params;

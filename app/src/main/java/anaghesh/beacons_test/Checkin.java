@@ -20,11 +20,13 @@ public class Checkin extends AppCompatActivity {
     private EditText beacon_num;
 
     @Override
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_checkin);
         toolbarSetup();
         setupUI();
+
         search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

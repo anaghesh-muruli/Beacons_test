@@ -30,7 +30,7 @@ public class FindCar extends AppCompatActivity {
     public String BeaconPublicID;
     public int carVIN;
     public double lat,lng;
-    String zone;
+    String zone, MacId;
     public static SharedPreferences sharedpreferences;
 
 
@@ -90,13 +90,16 @@ public class FindCar extends AppCompatActivity {
                             JSONObject Object = document.getJSONObject(i);
                             BeaconPublicID = Object.getString("BeconPublicID");
                             carVIN = Object.getInt("CarVIN");
+
                             lat = Object.getDouble("Latitude");
                             lng = Object.getDouble("Longitude");
                             zone = Object.getString("PzName");
+                            MacId = Object.getString("BeconMacID");
+
                             Log.e("lat in FC",""+lat);
                             Log.e("Long in FC",""+lng);
                             Log.e("zone in FC",""+zone);
-
+                            Log.e("Macid",""+MacId);
 
 
 
@@ -107,6 +110,7 @@ public class FindCar extends AppCompatActivity {
                         i.putExtra("lat",lat);
                         i.putExtra("lng",lng);
                         i.putExtra("pzName",zone);
+                        i.putExtra("MacId",MacId);
                         startActivity(i);
                     } else if(obj.getInt("Code")==0) {
                         Log.e("Response","0");

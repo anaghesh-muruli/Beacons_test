@@ -206,10 +206,10 @@ public class Checkout extends AppCompatActivity {
                 Log.e("Inside","getParams");
                 Log.e("CarVIN", vinNum.getText().toString());
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("checkedOutStatus", "1");
+                params.put("IsCheckedOut", "1");
                 params.put("BeconID", ""+beaconID);
                 params.put("CarID", ""+carID);
-
+                params.put("MappingUpdatedBy", ""+123);
                 Log.d("BeconID", ""+beaconID);
                 return params;
             }

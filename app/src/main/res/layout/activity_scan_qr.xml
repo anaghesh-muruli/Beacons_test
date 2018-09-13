@@ -139,28 +139,27 @@
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/beacon_edittext"
         app:layout_constraintEnd_toEndOf="@+id/beacon_edittext"
-        app:layout_constraintHorizontal_bias="0.962"
+        app:layout_constraintHorizontal_bias="0.958"
         app:layout_constraintStart_toStartOf="@+id/beacon_edittext"
         app:layout_constraintTop_toTopOf="@+id/beacon_edittext"
-        app:layout_constraintVertical_bias="0.357"
-        app:srcCompat="@drawable/cross" />
+        app:layout_constraintVertical_bias="0.428"
+        app:srcCompat="@drawable/greentick" />
 
     <ImageView
         android:id="@+id/vin_verify"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="5dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/vin_edittext"
         app:layout_constraintEnd_toEndOf="@+id/vin_edittext"
-        app:layout_constraintHorizontal_bias="0.962"
+        app:layout_constraintHorizontal_bias="0.961"
         app:layout_constraintStart_toStartOf="@+id/vin_edittext"
         app:layout_constraintTop_toTopOf="@+id/vin_edittext"
-        app:layout_constraintVertical_bias="0.285"
-        app:srcCompat="@drawable/cross" />
+        app:layout_constraintVertical_bias="0.514"
+        app:srcCompat="@drawable/greentick" />
 
     <TextView
         android:id="@+id/scan_info"
@@ -168,7 +167,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:background="#e13c1f"
-        android:elevation="5dp"
+        android:elevation="3dp"
         android:textSize="17sp"
         android:paddingBottom="3dp"
         android:paddingTop="3dp"

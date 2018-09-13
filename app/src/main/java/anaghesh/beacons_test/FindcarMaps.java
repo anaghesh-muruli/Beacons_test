@@ -1,15 +1,12 @@
 package anaghesh.beacons_test;
 
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.RingtoneManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.ContextCompat;
+import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -18,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.androidadvance.topsnackbar.TSnackbar;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -45,6 +43,7 @@ public class FindcarMaps extends AppCompatActivity implements OnMapReadyCallback
     private TextView zone_result, vin_result;
     private UFODevice ufodevice;
     LatLng latLng;
+    String Macid,zone;
     public static SharedPreferences sharedPreferences;
     private UFOBeaconManager ufoBeaconManager; //UFO Beacon SDK
     private static DecimalFormat df2 = new DecimalFormat("#0.##");
@@ -74,7 +73,8 @@ public class FindcarMaps extends AppCompatActivity implements OnMapReadyCallback
             vin_result.setText(""+vin);
             lat = (double) b.get("lat");
             lng =(double) b.get("lng");
-            String zone =(String) b.get("pzName");
+            zone =(String) b.get("pzName");
+            Macid = (String) b.get("MacId");
             zone_result.setText(""+zone);
             Log.e("Lat",""+lat);
             Log.e("Long",""+lng);
@@ -115,6 +115,7 @@ public class FindcarMaps extends AppCompatActivity implements OnMapReadyCallback
                 .position(latLng)
                 .title("Car parked here")
                 .icon(icon));
+        mMap.getUiSettings().isZoomControlsEnabled();
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16));
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
 
@@ -142,29 +143,28 @@ public class FindcarMaps extends AppCompatActivity implements OnMapReadyCallback
                                                    Log.e("Inside","onSuccess");
 
 
-                                                   connect_beacons(ufodevice);
+                                                   // connect_beacons(ufodevice);
+                                                   String s = ufodevice.getBtdevice().getAddress();
+                                                   Log.e("MacId",""+ufodevice.getBtdevice().getAddress());
+                                                   if(s.equalsIgnoreCase(Macid)){
+                                                       Log.e("Connected to",""+Macid);
+                                                       Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                                                       vibrator.vibrate(200);
+                                                       TSnackbar snackbar = TSnackbar.make(findViewById(android.R.id.content), "Vehicle is Near", TSnackbar.LENGTH_LONG);
+                                                       snackbar.setActionTextColor(Color.WHITE);
+                                                       View snackbarView = snackbar.getView();
+                                                       snackbarView.setBackgroundColor(Color.parseColor("#FFC125"));
+                                                       TextView textView = (TextView) snackbarView.findViewById(com.androidadvance.topsnackbar.R.id.snackbar_text);
+                                                       textView.setTextColor(Color.YELLOW);
+                                                       snackbar.show();
+                                                       stopScan();
+
+                                                   }
                                                    //progressDialog.dismiss();
                                                    if (ufodevice != null && ufodevice.getDeviceType() == UFODeviceType.EDDYSTONE){
                                                        ufodevice.getProximityUUID();
                                                        //macid.setText(ufodevice.getBtdevice().getAddress());
-                                                       NotificationCompat.Builder mBuilder= new NotificationCompat.Builder(FindcarMaps.this);
 
-                                                       Intent i = new Intent(FindcarMaps.this, FindcarMaps.class);
-                                                       PendingIntent pendingIntent= PendingIntent.getActivity(FindcarMaps.this,0,i,0);
-
-                                                       mBuilder.setAutoCancel(true);
-                                                       mBuilder.setDefaults(NotificationCompat.DEFAULT_ALL);
-                                                       mBuilder.setTicker("Ticker");
-                                                       mBuilder.setContentInfo("Distance info");
-                                                       mBuilder.setContentIntent(pendingIntent);
-                                                       mBuilder.setSmallIcon(R.drawable.notification);
-                                                       mBuilder.setContentTitle("Car is Near");
-                                                       mBuilder.setColor(ContextCompat.getColor(FindcarMaps.this, R.color.fulassure));
-                                                       mBuilder.setContentText("Car distance is "+ df2.format(calculateDistance(ufodevice.getTxPower(),ufodevice.getRssi()))+" m");
-                                                       mBuilder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
-
-                                                       NotificationManager notificationManager= (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-                                                       notificationManager.notify(2,mBuilder.build());
                                                    }
 
                                                } });
@@ -202,7 +202,7 @@ public class FindcarMaps extends AppCompatActivity implements OnMapReadyCallback
                 startScan();
             }
         } }, new OnFailureListener() { @Override public void onFailure(int code, String message) {
-            Toast.makeText(FindcarMaps.this, "Please enable bluetooth from settings", Toast.LENGTH_SHORT).show();
+            Toast.makeText(FindcarMaps.this, "Please enable bluetooth", Toast.LENGTH_SHORT).show();
         } });
     }
 
@@ -211,6 +211,7 @@ public class FindcarMaps extends AppCompatActivity implements OnMapReadyCallback
         ufoBeaconManager.isLocationServiceEnabled(new OnSuccessListener()
         { @Override public void onSuccess(boolean isSuccess) {
             if(isSuccess){
+                isBlutoothEnabled();
             }
         } }, new OnFailureListener() { @Override public void onFailure(int code, String message) {
             Toast.makeText(FindcarMaps.this, "Enbale location service", Toast.LENGTH_SHORT).show();
@@ -223,16 +224,32 @@ public class FindcarMaps extends AppCompatActivity implements OnMapReadyCallback
         Log.e("Beacon dist",""+ufodevice.getDistance());
         Log.e("Beacon voltage",""+ufodevice.getEddystoneTLMBatteryVoltage());
         Log.e("Beacon",""+ufodevice.getDeviceType());
-       Log.e("ID",""+ufodevice.getModelId());
+        Log.e("ID",""+ufodevice.getModelId());
         Log.e("Beacon Rssi",""+ufodevice.getRssi());
+        Log.e("uuid",""+ufodevice.getProximityUUID());
+        Log.e("MacId",""+ufodevice.getBtdevice().getAddress());
 
+
+        for(int i = 1;i<11;i++){
+            Log.e("Beacon Rssi",""+ufodevice.getRssi());
+            if((ufodevice.getRssi())>-85){
+                Log.e("Latlong"+i,"To database");
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+        }
 
         Log.e("Dist",""+calculateDistance(ufodevice.getTxPower(),ufodevice.getRssi()));
         ufodevice.connect(new OnConnectSuccessListener()
                           { @Override public void onSuccess(UFODevice ufoDevice)
                           {   Log.e("Status","Device connected");
 
-                          stopScan();
+                              stopScan();
                               Toast.makeText(FindcarMaps.this, "Device connected", Toast.LENGTH_SHORT).show();
                           } },
                 new OnFailureListener() {
@@ -240,10 +257,11 @@ public class FindcarMaps extends AppCompatActivity implements OnMapReadyCallback
                     { runOnUiThread(new Runnable() { @Override public void run()
                     {
                         Log.e("Status","Device connection failed");
-                       Toast.makeText(FindcarMaps.this, "Connection failed", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(FindcarMaps.this, "Connection failed", Toast.LENGTH_SHORT).show();
                     }
                     } );}
                 });
+        Log.e("Device connect","Ended");
     }
     protected static double calculateDistance(int txPower, int rssi) {
         if (rssi == 0) {
