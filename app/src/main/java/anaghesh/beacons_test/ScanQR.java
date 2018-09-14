@@ -62,6 +62,7 @@ public class ScanQR extends AppCompatActivity {
     TextWatcher textWatcher = null;
     TextWatcher textWatcher1 = null;
     boolean flag = false;
+  //public  String vinString;
     boolean flag1 = false;
     public static String Macid;
     final int RequestCameraPermissionID = 1001;
@@ -465,6 +466,7 @@ public class ScanQR extends AppCompatActivity {
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.putString(BEACON_NUM,beacon.getText().toString());
                         editor.putString(VIN_NUM,vin.getText().toString());
+                        //vinString = vin.getText().toString();
                         editor.apply();
                         final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(ScanQR.this);
                         builder.setTitle("Checkin Successful");

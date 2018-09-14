@@ -205,11 +205,6 @@ public class Navigation_home extends AppCompatActivity
         return true;
     }
     void startScan(){
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 
 //        isBlutoothEnabled();
 //        isLoactonEnabled();
@@ -235,6 +230,7 @@ public class Navigation_home extends AppCompatActivity
                                                        Log.e("Longitude", ""+lng);
                                                        Log.e("CarVIN", ""+vinNum);
                                                        locationLogApi();
+                                                       parkingApi();
 
                                                    }
 
@@ -393,7 +389,7 @@ public class Navigation_home extends AppCompatActivity
                 Map<String, String> params = new HashMap<String, String>();
                 //  params.put("CarVIN", vin_result.getText().toString());
 
-                params.put("CarVIN", ""+vinNum);
+                    params.put("CarVIN", ""+vinNum);
                 Log.e("CarVIN", ""+vinNum);
                 params.put("Latitude", ""+lat);
                 params.put("Longitude", ""+lng);
@@ -451,5 +447,59 @@ public class Navigation_home extends AppCompatActivity
     @Override
     public void onProviderDisabled(String s) {
 
+    }
+    private void parkingApi() {
+
+        String Url = "http://ec2-18-216-80-229.us-east-2.compute.amazonaws.com:3000/becon_car_map/updateParked";
+
+        StringRequest rq = new StringRequest(Request.Method.POST, Url , new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                Log.d("Response Text", response);
+                try {
+                    JSONObject obj = new JSONObject(response);
+
+                    if (obj.getInt("Code")==1) {
+                        Log.e("Response","1");
+                    } else if(obj.getInt("Code")==0) {
+                        Log.e("Response","0");
+                        Toast.makeText(Navigation_home.this, "VIN does not exist", Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+                catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                Log.d("Response Error", error.toString());
+                Toast.makeText(getApplicationContext(), "Network Error", Toast.LENGTH_LONG).show();
+            }
+
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                Log.e("Inside","getParams");
+
+                Map<String, String> params = new HashMap<String, String>();
+                //  params.put("CarVIN", vin_result.getText().toString());
+                params.put("CarVIN", ""+vinNum);
+                Log.e("CarVIN", ""+vinNum);
+                params.put("Latitude", ""+lat);
+                params.put("Longitude", ""+lng);
+                params.put("MappingUpdatedBy", ""+123);
+                Log.e("Latitude", ""+lat);
+                Log.e("Longitude", ""+lng);
+
+                return params;
+            }
+        };
+        Singleton.getInstance(getApplicationContext()).addToRequestQueue(rq);
     }
 }
