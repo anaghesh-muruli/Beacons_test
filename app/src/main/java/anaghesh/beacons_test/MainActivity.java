@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
 //Method to setup UIs
  }
+
  void setupUI(){
         connect = findViewById(R.id.connect);
  }

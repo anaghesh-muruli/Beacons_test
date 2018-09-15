@@ -27,6 +27,7 @@ private EditText mobile_num,pass;
 
                     Toasty.success(Login.this, "Login Successful!", Toast.LENGTH_SHORT, true).show();
                     startActivity(new Intent(Login.this,Navigation_home.class));
+                    finish();
 
             }
         });

@@ -17,6 +17,7 @@
         android:title=""
         android:icon="@drawable/ic_bluetooth_blue"
         android:iconTintMode="add"
+        android:contentDescription="Bluetooth"
         android:iconTint="#0022ff"
         app:showAsAction="always" />
 
