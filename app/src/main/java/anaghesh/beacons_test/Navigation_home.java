@@ -58,6 +58,7 @@ public class Navigation_home extends AppCompatActivity
     private double lat, lng;
     private UFOBeaconManager ufoBeaconManager;
     ScanQR s1 = new ScanQR();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +66,12 @@ public class Navigation_home extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setupUI();
+        BluetoothAdapter mBtAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        if (! mBtAdapter.isEnabled()) {
+            mBtAdapter.enable();
+        }
+
         Log.e("Activity","Navigation_home");
         sharedPreferences = getSharedPreferences("Database", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -223,7 +230,7 @@ public class Navigation_home extends AppCompatActivity
                                                    // connect_beacons(ufodevice);
                                                    String s = ufodevice.getBtdevice().getAddress();
                                                    Log.e("MacId",""+ufodevice.getBtdevice().getAddress());
-                                                   if(s.equalsIgnoreCase(ScanQR.Macid)){
+                                                   if(s.equalsIgnoreCase(ScanQR.Macid.trim())){
                                                        Log.e("Connected to",ScanQR.Macid);
                                                        getLocation();
                                                        Log.e("Latitude", ""+lat);
@@ -407,7 +414,7 @@ public class Navigation_home extends AppCompatActivity
         Log.e("getLocation","called");
         try {
             locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 5, this);
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 5, this);
         }
         catch(SecurityException e) {
             e.printStackTrace();
