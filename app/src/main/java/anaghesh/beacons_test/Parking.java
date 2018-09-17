@@ -416,6 +416,8 @@ public class Parking extends AppCompatActivity implements OnMapReadyCallback {
                 params.put("Latitude", ""+lat);
                 params.put("Longitude", ""+lng);
                 params.put("MappingUpdatedBy", ""+123);
+                params.put("IsParked", ""+1);
+
                 Log.e("Latitude", ""+lat);
                Log.e("Longitude", ""+lng);
 

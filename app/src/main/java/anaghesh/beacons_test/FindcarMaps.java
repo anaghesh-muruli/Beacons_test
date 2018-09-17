@@ -75,7 +75,11 @@ public class FindcarMaps extends AppCompatActivity implements OnMapReadyCallback
             lng =(double) b.get("lng");
             zone =(String) b.get("pzName");
             Macid = (String) b.get("MacId");
-            zone_result.setText(""+zone);
+            if(zone==null)
+                zone_result.setText("Not Available");
+            else
+               zone_result.setText(""+zone);
+
             Log.e("Lat",""+lat);
             Log.e("Long",""+lng);
             Log.e("Zone",""+zone);

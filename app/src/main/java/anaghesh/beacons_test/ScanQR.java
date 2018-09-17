@@ -35,6 +35,7 @@ import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 import com.ufobeaconsdk.main.UFODevice;
+import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -468,18 +469,31 @@ public class ScanQR extends AppCompatActivity {
                         editor.putString(VIN_NUM,vin.getText().toString());
                         //vinString = vin.getText().toString();
                         editor.apply();
-                        final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(ScanQR.this);
-                        builder.setTitle("Checkin Successful");
-                        //  builder.setIcon(R.mipmap.ic_launcher);
-                        builder.setMessage("Beacon No. "+sharedPreferences.getString(BEACON_NUM,"")+" is assigned to VIN "+sharedPreferences.getString(VIN_NUM,""))
-                                .setCancelable(false)
-                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
+//                        final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(ScanQR.this);
+//                        builder.setTitle("Checkin Successful");
+//                        //  builder.setIcon(R.mipmap.ic_launcher);
+//                        builder.setMessage("Beacon No. "+sharedPreferences.getString(BEACON_NUM,"")+" is assigned to VIN "+sharedPreferences.getString(VIN_NUM,""))
+//                                .setCancelable(false)
+//                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//                                    public void onClick(DialogInterface dialog, int id) {
+//                                        startActivity(new Intent(ScanQR.this, Navigation_home.class));
+//                                    }
+//                                });
+//                        android.app.AlertDialog alert = builder.create();
+//                        alert.show();
+                        new LovelyStandardDialog(ScanQR.this, LovelyStandardDialog.ButtonLayout.VERTICAL)
+                                .setTopColorRes(R.color.colorPrimary)
+                                .setButtonsColorRes(R.color.green)
+                                .setIcon(R.drawable.alert_tick)
+                                .setTitle("Assigned Successfully")
+                                .setPositiveButton(android.R.string.ok, new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
                                         startActivity(new Intent(ScanQR.this, Navigation_home.class));
                                     }
-                                });
-                        android.app.AlertDialog alert = builder.create();
-                        alert.show();
+                                })
+                                .setMessage("Beacon No. "+sharedPreferences.getString(BEACON_NUM,"")+" is assigned to VIN "+sharedPreferences.getString(VIN_NUM,""))
+                                .show();
 
                     } else if(obj.getInt("Code")==0) {
                         Log.e("Response","0");
@@ -509,6 +523,8 @@ public class ScanQR extends AppCompatActivity {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("CarID", ""+carID );
                 params.put("BeconID", ""+beaconID);
+                params.put("MappingUpdatedBy", ""+11);
+                params.put("MappingCreatedBy", ""+11);
                Log.e("CarID", ""+carID );
                Log.e("BeconID", ""+beaconID);
 

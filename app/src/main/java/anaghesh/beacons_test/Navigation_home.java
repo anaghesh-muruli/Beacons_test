@@ -368,6 +368,7 @@ public class Navigation_home extends AppCompatActivity
                                    }
         );
     }
+
     void stopScan(){
 
         Log.e("Method","stopScan");
@@ -613,6 +614,7 @@ public class Navigation_home extends AppCompatActivity
                 Log.e("CarVIN", ""+vinNum);
                 params.put("Latitude", ""+lat);
                 params.put("Longitude", ""+lng);
+                params.put("IsParked", ""+0);
                 params.put("MappingUpdatedBy", ""+123);
                 Log.e("Latitude", ""+lat);
                 Log.e("Longitude", ""+lng);
