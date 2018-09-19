@@ -1,7 +1,6 @@
 package anaghesh.beacons_test;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.IntentSender;
@@ -51,6 +50,9 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.ufobeaconsdk.callback.OnFailureListener;
+import com.ufobeaconsdk.callback.OnSuccessListener;
+import com.ufobeaconsdk.main.UFOBeaconManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -70,7 +72,9 @@ public class Parking extends AppCompatActivity implements OnMapReadyCallback {
     private TextView bcn_result, vin_result;
     LocationRequest mLocationRequest;
     Location mLastLocation;
+    UFOBeaconManager ufoBeaconManager;
     Marker mCurrLocationMarker;
+    static public int flag = 0;
     public static SharedPreferences sharedPreferences;
 
     protected static final int REQUEST_CHECK_SETTINGS = 0x1;
@@ -88,6 +92,7 @@ public class Parking extends AppCompatActivity implements OnMapReadyCallback {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_parking);
         toolbarSetup();
+        flag =1;
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -96,6 +101,7 @@ public class Parking extends AppCompatActivity implements OnMapReadyCallback {
         confirm = findViewById(R.id.confirm_park);
         vin_result = findViewById(R.id.vin_res);
         bcn_result = findViewById(R.id.bcn_res);
+        ufoBeaconManager = new UFOBeaconManager(this);
         sharedPreferences = getSharedPreferences("Database", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         sharedpreferences = getSharedPreferences("Database", Context.MODE_PRIVATE);
@@ -104,6 +110,7 @@ public class Parking extends AppCompatActivity implements OnMapReadyCallback {
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 parkingApi();
 
             }
@@ -121,7 +128,7 @@ public class Parking extends AppCompatActivity implements OnMapReadyCallback {
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
      */
-    @SuppressLint("MissingPermission")
+  //  @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mGoogleMap = googleMap;
@@ -171,7 +178,7 @@ public class Parking extends AppCompatActivity implements OnMapReadyCallback {
                 CameraUpdate yourLocation = CameraUpdateFactory.newLatLngZoom(latLng, 16);
                 mGoogleMap.addMarker(new MarkerOptions()
                         .position(latLng)
-                        .title("Marker in Sydney")
+                        .title("Current Location")
                         .icon(icon));
                 mGoogleMap.animateCamera(yourLocation);
                 SharedPreferences.Editor editor = sharedpreferences.edit();
@@ -377,11 +384,13 @@ public class Parking extends AppCompatActivity implements OnMapReadyCallback {
                                 .setCancelable(false)
                                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
-                                        finish();
+                                      finish();
+
                                     }
                                 });
                         android.app.AlertDialog alert = builder.create();
                         alert.show();
+
 
                     } else if(obj.getInt("Code")==0) {
                         Log.e("Response","0");
@@ -425,5 +434,18 @@ public class Parking extends AppCompatActivity implements OnMapReadyCallback {
             }
         };
         Singleton.getInstance(getApplicationContext()).addToRequestQueue(rq);
+    }
+    void stopScan(){
+
+        Log.e("Method","stopScan");
+        ufoBeaconManager.stopScan(new OnSuccessListener()
+                                  { @Override public void onSuccess(boolean isStop) { runOnUiThread(new Runnable() { @Override public void run() {
+                                      Toast.makeText(Parking.this, "Scan stopped", Toast.LENGTH_SHORT).show();
+                                      //update UI
+                                  } }); } },
+                new OnFailureListener() { @Override public void onFailure(final int code, final String message)
+                { runOnUiThread(new Runnable() { @Override public void run() {
+                    Toast.makeText(Parking.this, "Scan could not be stopped", Toast.LENGTH_SHORT).show();            } }); } });
+
     }
 }

@@ -315,7 +315,7 @@ public class ScanQR extends AppCompatActivity {
         }
     }
     private void checkBeaconApi() {
-        scanInfo.setText("Please scan car barcode");
+        scanInfo.setText("Please scan Vehicle barcode");
         String zone;
         String Url = "http://ec2-18-216-80-229.us-east-2.compute.amazonaws.com:3000/becon/verifyBecon";
 
@@ -482,9 +482,9 @@ public class ScanQR extends AppCompatActivity {
 //                        android.app.AlertDialog alert = builder.create();
 //                        alert.show();
                         new LovelyStandardDialog(ScanQR.this, LovelyStandardDialog.ButtonLayout.VERTICAL)
-                                .setTopColorRes(R.color.colorPrimary)
+                                .setTopColorRes(R.color.green)
                                 .setButtonsColorRes(R.color.green)
-                                .setIcon(R.drawable.alert_tick)
+                                .setIcon(R.drawable.whitetick)
                                 .setTitle("Assigned Successfully")
                                 .setPositiveButton(android.R.string.ok, new View.OnClickListener() {
                                     @Override
@@ -497,7 +497,11 @@ public class ScanQR extends AppCompatActivity {
 
                     } else if(obj.getInt("Code")==0) {
                         Log.e("Response","0");
-                        Toast.makeText(ScanQR.this, "Beacon-Car already assigned", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ScanQR.this, "Vehicle already assigned", Toast.LENGTH_SHORT).show();
+                    }
+                    else if(obj.getInt("Code")==2) {
+                        Log.e("Response","0");
+                        Toast.makeText(ScanQR.this, "Beacon already assigned", Toast.LENGTH_SHORT).show();
                     }
 
                 }
@@ -523,7 +527,7 @@ public class ScanQR extends AppCompatActivity {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("CarID", ""+carID );
                 params.put("BeconID", ""+beaconID);
-                params.put("MappingUpdatedBy", ""+11);
+               // params.put("MappingUpdatedBy", ""+11);
                 params.put("MappingCreatedBy", ""+11);
                Log.e("CarID", ""+carID );
                Log.e("BeconID", ""+beaconID);

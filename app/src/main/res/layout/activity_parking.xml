@@ -92,7 +92,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:text="Car VIN: "
+            android:text="VIN: "
             android:textColor="#c9c9c9"
             android:textSize="17sp"
             map:layout_constraintBottom_toTopOf="@+id/confirm_park"

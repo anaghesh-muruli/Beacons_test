@@ -12,6 +12,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
@@ -62,8 +63,9 @@ import static anaghesh.beacons_test.ScanQR.VIN_NUM;
 public class Navigation_home extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, LocationListener,GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
-    private ImageView checkin_img, park, findcar, checkout;
+    private ImageView  checkin_img, park, findcar, checkout;
     private UFODevice ufoDevice;
+
     LocationManager locationManager;
     public static  SharedPreferences sharedpreferences;
     public static SharedPreferences sharedPreferences;
@@ -312,11 +314,22 @@ public class Navigation_home extends AppCompatActivity
             // Handle the camera action
         }  else if (id == R.id.nav_slideshow) {
 
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.report) {
+            Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                    "mailto","anagheshm@gmail.com", null));
+            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Bug report: Fulassure asset tracking Android app ");
+            emailIntent.putExtra(Intent.EXTRA_TEXT, "");
+            startActivity(Intent.createChooser(emailIntent, "Report"));
 
-        } else if (id == R.id.nav_share) {
+        } else if (id == R.id.cont_us) {
+            Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                    "mailto","andan.patil@innohabit.com", null));
+            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Support: Fulassure asset tracking Android app ");
+            emailIntent.putExtra(Intent.EXTRA_TEXT, "");
+            startActivity(Intent.createChooser(emailIntent, "Contact us"));
 
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.about) {
+            startActivity(new Intent(this, About.class));
 
         }
 
@@ -326,10 +339,7 @@ public class Navigation_home extends AppCompatActivity
     }
     void startScan(){
 
-//        isBlutoothEnabled();
-//        isLoactonEnabled();
-//     progressDialog.setMessage("Scanning");
-//     progressDialog.show();
+
 
         Log.e("Method","startScan");
         ufoBeaconManager.startScan(new OnScanSuccessListener()
@@ -338,7 +348,6 @@ public class Navigation_home extends AppCompatActivity
                                            runOnUiThread(new Runnable() {
                                                @Override public void run(){
                                                    Log.e("Inside","onSuccess");
-
 
                                                    // connect_beacons(ufodevice);
                                                    String s = ufodevice.getBtdevice().getAddress();
@@ -351,7 +360,10 @@ public class Navigation_home extends AppCompatActivity
                                                        Log.e("CarVIN", ""+vinNum);
                                                        locationLogApi();
                                                        parkingApi();
-
+                                                       if(Parking.flag==1)
+                                                       {
+                                                           stopScan();
+                                                       }
                                                    }
 
                                                } });
@@ -367,6 +379,7 @@ public class Navigation_home extends AppCompatActivity
                                    } }); }
                                    }
         );
+
     }
 
     void stopScan(){
@@ -374,7 +387,7 @@ public class Navigation_home extends AppCompatActivity
         Log.e("Method","stopScan");
         ufoBeaconManager.stopScan(new OnSuccessListener()
                                   { @Override public void onSuccess(boolean isStop) { runOnUiThread(new Runnable() { @Override public void run() {
-                                      Toast.makeText(Navigation_home.this, "Scan stopped", Toast.LENGTH_SHORT).show();
+                                      Toast.makeText(Navigation_home.this, "", Toast.LENGTH_SHORT).show();
                                       //update UI
                                   } }); } },
                 new OnFailureListener() { @Override public void onFailure(final int code, final String message)

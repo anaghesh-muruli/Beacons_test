@@ -21,11 +21,11 @@
     <item android:title="Help &amp; Support">
         <menu>
             <item
-                android:id="@+id/nav_share"
+                android:id="@+id/report"
                 android:icon="@drawable/ic_feedback_black_24dp"
                 android:title="Report" />
             <item
-                android:id="@+id/nav_send"
+                android:id="@+id/cont_us"
                 android:icon="@drawable/ic_menu_send"
                 android:title="Contact us" />
             <item
