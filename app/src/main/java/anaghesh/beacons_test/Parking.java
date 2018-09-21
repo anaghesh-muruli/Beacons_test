@@ -66,7 +66,6 @@ import static anaghesh.beacons_test.ScanQR.VIN_NUM;
 
 //uses google maps API
 public class Parking extends AppCompatActivity implements OnMapReadyCallback {
-
     GoogleMap mGoogleMap;
     SupportMapFragment mapFrag;
     private TextView bcn_result, vin_result;
@@ -76,7 +75,6 @@ public class Parking extends AppCompatActivity implements OnMapReadyCallback {
     Marker mCurrLocationMarker;
     static public int flag = 0;
     public static SharedPreferences sharedPreferences;
-
     protected static final int REQUEST_CHECK_SETTINGS = 0x1;
     GoogleApiClient mGoogleApiClient;
     public static  SharedPreferences sharedpreferences;
@@ -92,7 +90,7 @@ public class Parking extends AppCompatActivity implements OnMapReadyCallback {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_parking);
         toolbarSetup();
-        flag =1;
+
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -117,6 +115,7 @@ public class Parking extends AppCompatActivity implements OnMapReadyCallback {
         });
 
     }
+
 
 
     /**
@@ -255,7 +254,6 @@ public class Parking extends AppCompatActivity implements OnMapReadyCallback {
                     //Intent intent = new Intent(park_activity.this , ActivityPermission.class);
                     //startActivity(intent);
                 }
-                return;
             }
 
             // other 'case' lines to check for other
@@ -376,6 +374,7 @@ public class Parking extends AppCompatActivity implements OnMapReadyCallback {
                     JSONObject obj = new JSONObject(response);
 
                     if (obj.getInt("Code")==1) {
+                        flag =1;
                         Log.e("Response","1");
                         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(Parking.this);
                         builder.setTitle("Parking Successful");

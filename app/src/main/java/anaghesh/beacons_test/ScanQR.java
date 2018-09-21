@@ -345,6 +345,7 @@ public class ScanQR extends AppCompatActivity {
 
                     } else if(obj.getInt("Code")==0) {
                         Log.e("Response","0");
+                        flag = false;
                         bcnVerify.setVisibility(View.INVISIBLE);
                     //    Toast.makeText(ScanQR.this, "Beacon is not registered", Toast.LENGTH_SHORT).show();
                     }
@@ -410,6 +411,7 @@ public class ScanQR extends AppCompatActivity {
 
 
                     } else if(obj.getInt("Code")==0) {
+                        flag1 =false;
                         Log.e("Response","0");
                         vinVerify.setVisibility(View.INVISIBLE);
                        // Toast.makeText(ScanQR.this, "Vehicle is not registered", Toast.LENGTH_SHORT).show();
@@ -496,10 +498,14 @@ public class ScanQR extends AppCompatActivity {
                                 .show();
 
                     } else if(obj.getInt("Code")==0) {
+                        flag1 =false;
+
                         Log.e("Response","0");
                         Toast.makeText(ScanQR.this, "Vehicle already assigned", Toast.LENGTH_SHORT).show();
                     }
                     else if(obj.getInt("Code")==2) {
+                        flag1 =false;
+
                         Log.e("Response","0");
                         Toast.makeText(ScanQR.this, "Beacon already assigned", Toast.LENGTH_SHORT).show();
                     }

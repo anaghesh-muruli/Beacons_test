@@ -27,6 +27,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -74,9 +75,10 @@ public class Navigation_home extends AppCompatActivity
     private UFOBeaconManager ufoBeaconManager;
     LocationRequest mLocationRequest;
     GoogleApiClient mGoogleApiClient;
+    static int count=0;
     PendingResult<LocationSettingsResult> result;
     final static int REQUEST_LOCATION = 199;
-
+    private TextView locationPopup;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,6 +86,8 @@ public class Navigation_home extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setupUI();
+
+
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(LocationServices.API)
                 .addConnectionCallbacks(this)
@@ -243,25 +247,13 @@ public class Navigation_home extends AppCompatActivity
     public void onConnectionFailed(ConnectionResult connectionResult) {
 
     }
-    void doInBackground(){
-       Thread t1 =  new Thread(new Runnable() {
-            @Override
-            public void run() {
 
-                Log.e("Beacon scan thread","Running");
-                isBlutoothEnabled();
-
-
-
-            }
-        });
-       t1.start();
-    }
     void setupUI(){
         checkin_img = findViewById(R.id.checkin);
         park = findViewById(R.id.park);
         findcar = findViewById(R.id.findcar);
         checkout = findViewById(R.id.checkout);
+        locationPopup = findViewById(R.id.loc_update_popup);
     }
     @Override
     public void onBackPressed() {
@@ -347,23 +339,29 @@ public class Navigation_home extends AppCompatActivity
                                        @Override public void onSuccess(final UFODevice ufodevice) {
                                            runOnUiThread(new Runnable() {
                                                @Override public void run(){
+                                                   if(Parking.flag==1)
+                                                   {
+                                                       locationPopup.setVisibility(View.INVISIBLE);
+                                                       stopScan();
+                                                   }
+                                                   count++;
                                                    Log.e("Inside","onSuccess");
 
                                                    // connect_beacons(ufodevice);
                                                    String s = ufodevice.getBtdevice().getAddress();
                                                    Log.e("MacId",""+ufodevice.getBtdevice().getAddress());
-                                                   if(s.equalsIgnoreCase(ScanQR.Macid.trim())){
+                                                   //count is used to introduce delay
+                                                   if((s.equalsIgnoreCase(ScanQR.Macid.trim()))&&(count%5)==0){
                                                        Log.e("Connected to",ScanQR.Macid);
                                                        getLocation();
+                                                       if(count==1 || count== 5 || count ==10)
+                                                          // updateBatteryPercentage();
                                                        Log.e("Latitude", ""+lat);
                                                        Log.e("Longitude", ""+lng);
                                                        Log.e("CarVIN", ""+vinNum);
                                                        locationLogApi();
                                                        parkingApi();
-                                                       if(Parking.flag==1)
-                                                       {
-                                                           stopScan();
-                                                       }
+
                                                    }
 
                                                } });
@@ -492,7 +490,7 @@ public class Navigation_home extends AppCompatActivity
 
                     if (obj.getInt("Code")==1) {
                         Log.e("Response","1");
-
+                        locationPopup.setVisibility(View.VISIBLE);
 
                     } else if(obj.getInt("Code")==0) {
                         Log.e("Response","0");
@@ -509,9 +507,10 @@ public class Navigation_home extends AppCompatActivity
 
             @Override
             public void onErrorResponse(VolleyError error) {
+                locationPopup.setText("Network error");
+                locationPopup.setBackgroundColor(getResources().getColor(R.color.red));
+                locationPopup.setVisibility(View.VISIBLE);
 
-                Log.d("Response Error", error.toString());
-                Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_LONG).show();
             }
 
         }) {
@@ -529,6 +528,7 @@ public class Navigation_home extends AppCompatActivity
                 params.put("Longitude", ""+lng);
                 Log.e("Latitude", ""+lat);
                 Log.e("Longitude", ""+lng);
+
 
                 return params;
             }
@@ -584,7 +584,7 @@ public class Navigation_home extends AppCompatActivity
     }
     private void parkingApi() {
 
-        String Url = "http://ec2-18-216-80-229.us-east-2.compute.amazonaws.com:3000/becon_car_map/updateParked";
+        String Url = "http://ec2-18-216-80-229.us-east-2.compute.amazonaws.com:3000/becon_car_map/UpdateLocation";
 
         StringRequest rq = new StringRequest(Request.Method.POST, Url , new Response.Listener<String>() {
             @Override
@@ -612,7 +612,10 @@ public class Navigation_home extends AppCompatActivity
             public void onErrorResponse(VolleyError error) {
 
                 Log.d("Response Error", error.toString());
-                Toast.makeText(getApplicationContext(), "Network Error", Toast.LENGTH_LONG).show();
+                locationPopup.setText("Network error");
+                locationPopup.setBackgroundColor(getResources().getColor(R.color.red));
+                locationPopup.setVisibility(View.VISIBLE);
+
             }
 
         }) {
@@ -627,7 +630,6 @@ public class Navigation_home extends AppCompatActivity
                 Log.e("CarVIN", ""+vinNum);
                 params.put("Latitude", ""+lat);
                 params.put("Longitude", ""+lng);
-                params.put("IsParked", ""+0);
                 params.put("MappingUpdatedBy", ""+123);
                 Log.e("Latitude", ""+lat);
                 Log.e("Longitude", ""+lng);
@@ -636,5 +638,8 @@ public class Navigation_home extends AppCompatActivity
             }
         };
         Singleton.getInstance(getApplicationContext()).addToRequestQueue(rq);
+    }
+    void BatteryPercentage(){
+
     }
 }

@@ -6,7 +6,9 @@
     android:layout_height="match_parent"
     tools:context=".Home">
 
+
     <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraintLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -55,5 +57,29 @@
             app:srcCompat="@drawable/findcar" />
 
     </android.support.constraint.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        tools:layout_editor_absoluteX="119dp"
+        tools:layout_editor_absoluteY="665dp" />
+
+    <TextView
+        android:id="@+id/loc_update_popup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#35ce06"
+        android:text="Updating Location"
+        android:textColor="#ffffff"
+        android:gravity="center"
+        android:paddingTop="3dp"
+        android:visibility="invisible"
+        android:paddingBottom="3dp"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

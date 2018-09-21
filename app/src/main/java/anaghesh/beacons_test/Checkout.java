@@ -49,7 +49,10 @@ public class Checkout extends AppCompatActivity {
         search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                checkoutFindAPI();
+                if(vinNum.getText().toString().isEmpty())
+                    Toast.makeText(Checkout.this, "Please Enter VIN", Toast.LENGTH_SHORT).show();
+                else
+                    checkoutFindAPI();
                 InputMethodManager inputManager = (InputMethodManager) //auto hide keyboard
                         getSystemService(Context.INPUT_METHOD_SERVICE);
 
@@ -173,7 +176,9 @@ public class Checkout extends AppCompatActivity {
                                 .setCancelable(false)
                                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
+                                        Parking.flag =0;
                                         finish();
+
                                     }
                                 });
                         android.app.AlertDialog alert = builder.create();

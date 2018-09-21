@@ -1,5 +1,6 @@
 package anaghesh.beacons_test;
 
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -41,12 +42,20 @@ public class FindCar extends AppCompatActivity {
         setContentView(R.layout.activity_find_car);
         toolbarSetup();
         setupUI();
-        sharedpreferences = getSharedPreferences("Database",
-                Context.MODE_PRIVATE);
+        BluetoothAdapter mBtAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        if (! mBtAdapter.isEnabled()) {
+            mBtAdapter.enable();
+        }
+
+        sharedpreferences = getSharedPreferences("Database",Context.MODE_PRIVATE);
         search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FindcarAPI();
+                if(beaconNum.getText().toString().isEmpty())
+                    Toast.makeText(FindCar.this, "Please enter VIN", Toast.LENGTH_SHORT).show();
+                else
+                    FindcarAPI();
             }
         });
     }
@@ -110,11 +119,10 @@ public class FindCar extends AppCompatActivity {
                         i.putExtra("carVIN",carVIN);
                         i.putExtra("lat",lat);
                         i.putExtra("lng",lng);
-                        if(zone!=null)
-                            i.putExtra("pzName",zone);
-                        else
+                        if(zone.equalsIgnoreCase("null"))
                             i.putExtra("pzName","Not Available");
-
+                        else
+                            i.putExtra("pzName",zone);
                         i.putExtra("MacId",MacId);
                         if(lat==0 || lng==0){
                             TSnackbar.make(findViewById(android.R.id.content),"Vehicle Not parked",TSnackbar.LENGTH_LONG).show();
