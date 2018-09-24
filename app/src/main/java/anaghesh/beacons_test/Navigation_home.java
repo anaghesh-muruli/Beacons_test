@@ -302,10 +302,10 @@ public class Navigation_home extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        }  else if (id == R.id.nav_slideshow) {
-
+        if (id == R.id.rePark) {
+            startActivity(new Intent(getApplicationContext(),RePark.class));
+        }  else if (id == R.id.carInventory) {
+            startActivity(new Intent(getApplicationContext(),CarInventory.class));
         } else if (id == R.id.report) {
             Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
                     "mailto","anagheshm@gmail.com", null));

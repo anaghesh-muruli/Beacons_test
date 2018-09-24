@@ -5,15 +5,15 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_camera"
+            android:id="@+id/rePark"
             android:icon="@drawable/ic_local_parking_black_24dp"
             android:title="Re-park" />
         <item
-            android:id="@+id/nav_slideshow"
+            android:id="@+id/carInventory"
             android:icon="@drawable/ic_directions_car_black_24dp"
             android:title="Car inventory" />
         <item
-            android:id="@+id/nav_manage"
+            android:id="@+id/beconInventory"
             android:icon="@drawable/ic_beacon"
             android:title="Beacon inventory" />
     </group>
