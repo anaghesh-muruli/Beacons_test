@@ -32,6 +32,7 @@ public class FindCar extends AppCompatActivity {
     public int carVIN;
     public double lat,lng;
     String zone, MacId;
+
     public static SharedPreferences sharedpreferences;
 
 

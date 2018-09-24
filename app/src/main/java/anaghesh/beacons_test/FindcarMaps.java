@@ -90,7 +90,7 @@ public class FindcarMaps extends AppCompatActivity implements OnMapReadyCallback
     LatLng latLng;
     String Macid,zone;
     FusedLocationProviderClient mFusedLocationClient;
-
+    ImageView arrive;
     LocationRequest mLocationRequest;
     Location mLastLocation;
     public static SharedPreferences sharedPreferences;
@@ -102,6 +102,7 @@ public class FindcarMaps extends AppCompatActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_findcar_maps);
         toolbarSetup();
+        arrive = findViewById(R.id.arrive);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mBeaconManager = BeaconManager.getInstanceForApplication(this);
         // In this example, we will use Eddystone protocol, so we have to define it here
@@ -266,7 +267,7 @@ public class FindcarMaps extends AppCompatActivity implements OnMapReadyCallback
                 .title("Car parked here")
                 .icon(icon));
         mMap.getUiSettings().isZoomControlsEnabled();
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
 
 
@@ -543,13 +544,14 @@ public class FindcarMaps extends AppCompatActivity implements OnMapReadyCallback
             Log.e(TAG, "Dist "+beacons.iterator().next().getDistance()+" ");
             Log.e(TAG, "Type "+beacons.iterator().next().getBeaconTypeCode()+" ");
             Log.e(TAG, "Rssi "+beacons.iterator().next().getRssi()+" ");
+            Log.e(TAG, "Tx "+beacons.iterator().next().);
             Log.e(TAG, "Tx "+beacons.iterator().next().getTxPower()+" ");
             Log.e(TAG, "Tx "+beacons.iterator().next().getServiceUuid()+" ");
             if(s1.equalsIgnoreCase(Macid)){
                 Log.e("Connected to",""+Macid);
                 Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                 vibrator.vibrate(200);
-                Toast.makeText(this, "Vehicle is Near", Toast.LENGTH_SHORT).show();
+              arrive.setVisibility(View.VISIBLE);
                 mBeaconManager.unbind(this);
 
             }
@@ -558,6 +560,7 @@ public class FindcarMaps extends AppCompatActivity implements OnMapReadyCallback
 
 
     }
+
 
 
 }
