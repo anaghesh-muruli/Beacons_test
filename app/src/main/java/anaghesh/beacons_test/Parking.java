@@ -3,6 +3,7 @@ package anaghesh.beacons_test;
 import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -79,7 +80,6 @@ public class Parking extends AppCompatActivity implements OnMapReadyCallback {
     GoogleApiClient mGoogleApiClient;
     public static  SharedPreferences sharedpreferences;
     FusedLocationProviderClient mFusedLocationClient;
-    private Button confirm;
     public static final String Lat = "curLat";
     public static final String Long = "curLong";
     public double lat,lng;
@@ -96,7 +96,7 @@ public class Parking extends AppCompatActivity implements OnMapReadyCallback {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        confirm = findViewById(R.id.confirm_park);
+        Button confirm = findViewById(R.id.confirm_park);
         vin_result = findViewById(R.id.vin_res);
         bcn_result = findViewById(R.id.bcn_res);
         ufoBeaconManager = new UFOBeaconManager(this);
@@ -383,7 +383,7 @@ public class Parking extends AppCompatActivity implements OnMapReadyCallback {
                                 .setCancelable(false)
                                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
-                                      finish();
+                                      startActivity(new Intent(Parking.this, Navigation_home.class));
 
                                     }
                                 });

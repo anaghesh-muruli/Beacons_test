@@ -14,6 +14,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.RemoteException;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -26,6 +27,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,9 +53,18 @@ import com.ufobeaconsdk.callback.OnSuccessListener;
 import com.ufobeaconsdk.main.UFOBeaconManager;
 import com.ufobeaconsdk.main.UFODevice;
 
+import org.altbeacon.beacon.Beacon;
+import org.altbeacon.beacon.BeaconConsumer;
+import org.altbeacon.beacon.BeaconManager;
+import org.altbeacon.beacon.BeaconParser;
+import org.altbeacon.beacon.Identifier;
+import org.altbeacon.beacon.RangeNotifier;
+import org.altbeacon.beacon.Region;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -63,9 +74,14 @@ import static anaghesh.beacons_test.ScanQR.VIN_NUM;
 
 public class Navigation_home extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, LocationListener,GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener {
+        GoogleApiClient.OnConnectionFailedListener,BeaconConsumer, RangeNotifier {
     private ImageView  checkin_img, park, findcar, checkout;
     private UFODevice ufoDevice;
+    protected static final String TAG = "RangingActivity";
+    Region region;
+    Button button;
+    private BeaconManager mBeaconManager;
+
 
     LocationManager locationManager;
     public static  SharedPreferences sharedpreferences;
@@ -86,6 +102,12 @@ public class Navigation_home extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setupUI();
+        getLocation();
+        mBeaconManager = BeaconManager.getInstanceForApplication(this);
+        // In this example, we will use Eddystone protocol, so we have to define it here
+        mBeaconManager.getBeaconParsers().add(new BeaconParser().
+                setBeaconLayout(BeaconParser.EDDYSTONE_UID_LAYOUT));
+        // Binds this activity to the BeaconService
 
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -116,7 +138,9 @@ public class Navigation_home extends AppCompatActivity
         Log.e("Beacon Macid",""+ScanQR.Macid);
         ufoBeaconManager = new UFOBeaconManager(this);
         if(ScanQR.Macid!=null)
-            isBlutoothEnabled();
+            mBeaconManager.bind(this);
+           // isBlutoothEnabled();
+
 
        // doInBackground();
         //Home page elements
@@ -641,5 +665,54 @@ public class Navigation_home extends AppCompatActivity
     }
     void BatteryPercentage(){
 
+    }
+    @Override
+    public void onBeaconServiceConnect() {
+        if(Parking.flag==1)
+            mBeaconManager.unbind(this);
+        Log.e("Inside","DidRange");
+        // Encapsulates a beacon identifier of arbitrary byte length
+        ArrayList<Identifier> identifiers = new ArrayList<>();
+        region = new Region("AllBeaconsRegion", identifiers);
+        // Set null to indicate that we want to match beacons with any value
+        identifiers.add(null);
+        // Represents a criteria of fields used to match beacon
+
+        try {
+            // Tells the BeaconService to start looking for beacons that match the passed Region object
+            mBeaconManager.startRangingBeaconsInRegion(region);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        // Specifies a class that should be called each time the BeaconService gets ranging data, once per second by default
+        mBeaconManager.addRangeNotifier(this);
+    }
+    @Override
+    public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
+        if(Parking.flag==1)
+            mBeaconManager.unbind(this);
+        if (beacons.size() > 0) {
+            Log.e("Inside","DidRange");
+            Log.e(TAG, "Bluetooth MacId "+beacons.iterator().next().getBluetoothAddress());
+            String s= beacons.iterator().next().getBluetoothAddress();
+            Log.e(TAG, "Bluetooth Name "+beacons.iterator().next().getBluetoothName()+" ");
+            Log.e(TAG, "Dist "+beacons.iterator().next().getDistance()+" ");
+            Log.e(TAG, "Type "+beacons.iterator().next().getBeaconTypeCode()+" ");
+            Log.e(TAG, "Rssi "+beacons.iterator().next().getRssi()+" ");
+            Log.e(TAG, "Tx "+beacons.iterator().next().getTxPower()+" ");
+            Log.e(TAG, "Tx "+beacons.iterator().next().getServiceUuid()+" ");
+            if((s.equalsIgnoreCase(ScanQR.Macid.trim()))&&(count%5)==0){
+                Log.e("Connected to",ScanQR.Macid);
+
+                if(count==1 || count== 5 || count ==10)
+                    // updateBatteryPercentage();
+                    Log.e("Latitude", ""+lat);
+                Log.e("Longitude", ""+lng);
+                Log.e("CarVIN", ""+vinNum);
+                locationLogApi();
+                parkingApi();
+
+            }
+        }
     }
 }
