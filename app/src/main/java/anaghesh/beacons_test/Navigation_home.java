@@ -663,6 +663,56 @@ public class Navigation_home extends AppCompatActivity
         };
         Singleton.getInstance(getApplicationContext()).addToRequestQueue(rq);
     }
+    private void batteryApi() {
+
+        String Url = "http://ec2-18-216-80-229.us-east-2.compute.amazonaws.com:3000/becon/batterylife/update";
+
+        StringRequest rq = new StringRequest(Request.Method.POST, Url , new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                Log.d("Response Text", response);
+                try {
+                    JSONObject obj = new JSONObject(response);
+
+                    if (obj.getInt("Code")==1) {
+                        Log.e("Response","1");
+                    } else if(obj.getInt("Code")==0) {
+                        Log.e("Response","0");
+                        Toast.makeText(Navigation_home.this, "VIN does not exist", Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+                catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                Log.d("Response Error", error.toString());
+
+            }
+
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                Log.e("Inside","getParams");
+
+                Map<String, String> params = new HashMap<String, String>();
+                //  params.put("CarVIN", vin_result.getText().toString());
+                params.put("BeconPublicID", ""+ScanQR.beaconStr);
+                Log.e("BeconBatteryLife", ""+90);
+                params.put("BeconBatteryLife", ""+90);
+
+                return params;
+            }
+        };
+        Singleton.getInstance(getApplicationContext()).addToRequestQueue(rq);
+    }
     void BatteryPercentage(){
 
     }
@@ -704,7 +754,7 @@ public class Navigation_home extends AppCompatActivity
             if((s.equalsIgnoreCase(ScanQR.Macid.trim()))&&(count%5)==0){
                 Log.e("Connected to",ScanQR.Macid);
 
-                if(count==1 || count== 5 || count ==10)
+                if(count==1 || count== 5 || count ==10){
                     // updateBatteryPercentage();
                     Log.e("Latitude", ""+lat);
                 Log.e("Longitude", ""+lng);
@@ -712,7 +762,7 @@ public class Navigation_home extends AppCompatActivity
                 locationLogApi();
                 parkingApi();
 
-            }
+            }}
         }
     }
 }
