@@ -544,7 +544,6 @@ public class FindcarMaps extends AppCompatActivity implements OnMapReadyCallback
             Log.e(TAG, "Dist "+beacons.iterator().next().getDistance()+" ");
             Log.e(TAG, "Type "+beacons.iterator().next().getBeaconTypeCode()+" ");
             Log.e(TAG, "Rssi "+beacons.iterator().next().getRssi()+" ");
-            Log.e(TAG, "Tx "+beacons.iterator().next().);
             Log.e(TAG, "Tx "+beacons.iterator().next().getTxPower()+" ");
             Log.e(TAG, "Tx "+beacons.iterator().next().getServiceUuid()+" ");
             if(s1.equalsIgnoreCase(Macid)){
