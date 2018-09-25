@@ -754,15 +754,15 @@ public class Navigation_home extends AppCompatActivity
             if((s.equalsIgnoreCase(ScanQR.Macid.trim()))&&(count%5)==0){
                 Log.e("Connected to",ScanQR.Macid);
 
-                if(count==1 || count== 5 || count ==10){
-                    // updateBatteryPercentage();
+                if(count==1 || count== 5 || count ==10)
+                    batteryApi();
                     Log.e("Latitude", ""+lat);
                 Log.e("Longitude", ""+lng);
                 Log.e("CarVIN", ""+vinNum);
                 locationLogApi();
                 parkingApi();
 
-            }}
+            }
         }
     }
 }

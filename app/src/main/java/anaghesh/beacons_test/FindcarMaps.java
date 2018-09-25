@@ -82,7 +82,7 @@ public class FindcarMaps extends AppCompatActivity implements OnMapReadyCallback
     private BeaconManager mBeaconManager;
     private GoogleMap mMap;
     private ImageView navigation;
-
+    int flag = 0;
     GoogleApiClient mGoogleApiClient;
     private double lat, lng;
     private TextView zone_result, vin_result;
@@ -516,6 +516,8 @@ public class FindcarMaps extends AppCompatActivity implements OnMapReadyCallback
     }
     @Override
     public void onBeaconServiceConnect() {
+        if(flag==1)
+            mBeaconManager.unbind(this);
         Log.e("Inside","DidRange");
         // Encapsulates a beacon identifier of arbitrary byte length
         ArrayList<Identifier> identifiers = new ArrayList<>();
@@ -550,6 +552,7 @@ public class FindcarMaps extends AppCompatActivity implements OnMapReadyCallback
                 Log.e("Connected to",""+Macid);
                 Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                 vibrator.vibrate(200);
+                flag = 1;
               arrive.setVisibility(View.VISIBLE);
                 mBeaconManager.unbind(this);
 
