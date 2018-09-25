@@ -94,7 +94,8 @@
             android:name=".FindcarMaps"
             android:label="@string/title_activity_findcar_maps"
             android:parentActivityName=".FindCar" />
-        <activity android:name=".About"></activity>
+        <activity android:name=".About" />
+        <activity android:name=".Repark"></activity>
     </application>
 
 </manifest>
