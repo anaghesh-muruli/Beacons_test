@@ -94,16 +94,19 @@
             android:name=".FindcarMaps"
             android:label="@string/title_activity_findcar_maps"
             android:parentActivityName=".FindCar" />
-        <activity android:name=".About"></activity>
+        <activity android:name=".About" />
         <activity
             android:name=".CarInventory"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:parentActivityName=".Navigation_home"/>
+            android:parentActivityName=".Navigation_home"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".RePark"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:parentActivityName=".Navigation_home"/>
-
+            android:parentActivityName=".Navigation_home"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".BeaconInventory"
+            android:parentActivityName=".Navigation_home"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

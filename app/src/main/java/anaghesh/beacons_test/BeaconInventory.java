@@ -36,27 +36,27 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CarInventory extends AppCompatActivity {
-    private static final String TAG = CarInventory.class.getSimpleName();
+public class BeaconInventory extends AppCompatActivity {
+    private static final String TAG = BeaconInventory.class.getSimpleName();
     private RecyclerView recyclerView;
-    private List<CarData> carList;
-    private CarAdapter carAdapter;
+    private List<BeaconData> beaconList;
+    private BeaconAdapter beaconAdapter;
     private SearchView searchView;
-    int CarVIN;String CarChassisNumber,CarModel;
+    String BeaconPublicId,MacId,UUID, Battery;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_car_inventory);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        setContentView(R.layout.activity_beacon_inventory);
+        Toolbar toolbar = findViewById(R.id.btoolbar);
         setSupportActionBar(toolbar);
 
         // toolbar fancy stuff
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("Car Inventory");
+        getSupportActionBar().setTitle("Beacon Inventory");
 
-        recyclerView = findViewById(R.id.myRecyclerView);
+        recyclerView = findViewById(R.id.mybRecyclerView);
 
 
         // transparent background notification bar
@@ -65,8 +65,8 @@ public class CarInventory extends AppCompatActivity {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
 
-        carList = new ArrayList<>();
-        getCarDetailsApi();
+        beaconList = new ArrayList<>();
+        getBeaconDetailsApi();
 
     }
 
@@ -89,14 +89,14 @@ public class CarInventory extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 // filter recycler view when query submitted
-                carAdapter.getFilter().filter(query);
+                beaconAdapter.getFilter().filter(query);
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String query) {
                 // filter recycler view when text is changed
-                carAdapter.getFilter().filter(query);
+                beaconAdapter.getFilter().filter(query);
                 return false;
             }
         });
@@ -137,8 +137,8 @@ public class CarInventory extends AppCompatActivity {
         }
     }
 
-    public void getCarDetailsApi(){
-        String Url = "http://ec2-18-216-80-229.us-east-2.compute.amazonaws.com:3000/car/latestCar";
+    public void getBeaconDetailsApi(){
+        String Url = "http://ec2-18-216-80-229.us-east-2.compute.amazonaws.com:3000/becon/latestBecon";
 
         StringRequest rq = new StringRequest(Request.Method.GET, Url , new Response.Listener<String>() {
             @Override
@@ -151,26 +151,28 @@ public class CarInventory extends AppCompatActivity {
                     if (obj.getInt("Code")==1) {
                         JSONArray document = obj.getJSONArray("Document");
                         Log.e("Response", "1");
-                        Log.e("Inside","checkCar");
+                        Log.e("Inside","checkBeacon");
 
                         for (int i = 0; i < document.length(); i++) {
                             //getting the json object of the particular index inside the array
                             JSONObject Object = document.getJSONObject(i);
-                            CarVIN = Object.getInt("CarVIN");
-                            CarChassisNumber=Object.getString("ChassisNumber");
-                            CarModel=Object.getString("VehicleModel");
-                            Log.e("Car Details",""+CarVIN+"\n"+CarChassisNumber+"\n"+CarModel);
-                            carList.add(new CarData("Car VIN: " + String.valueOf(CarVIN),"Chassis Number: "+CarChassisNumber,"Vehicle Model: "+CarModel));
+                            BeaconPublicId = Object.getString("BeconPublicID");
+                            MacId=Object.getString("BeconMacID");
+                            UUID=Object.getString("BeconUUID");
+                            Battery=Object.getString("BeconBatteryLife");
+                            if(Battery==null) Battery = "0";
+                            Log.e("Beacon Details",""+BeaconPublicId+"\n"+MacId+"\n"+UUID+"\n"+Battery);
+                            beaconList.add(new BeaconData("Beacon Public ID: " + BeaconPublicId,"Beacon Mac Id: "+MacId,"Beacon UUID: "+UUID,"Battery Life:"+Battery+"%"));
 
                         }
-                        carAdapter = new CarAdapter(getApplicationContext(), carList);
+                        beaconAdapter = new BeaconAdapter(getApplicationContext(), beaconList);
                         recyclerView.setItemAnimator(new DefaultItemAnimator());
-                        recyclerView.setAdapter(carAdapter);
+                        recyclerView.setAdapter(beaconAdapter);
 
 
                     } else if(obj.getInt("Code")==0) {
                         Log.e("Response","0");
-                        Toast.makeText(CarInventory.this, "Vehicle is not registered", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(BeaconInventory.this, "Beacon is not registered", Toast.LENGTH_SHORT).show();
                     }
                 }
                 catch (JSONException e) {

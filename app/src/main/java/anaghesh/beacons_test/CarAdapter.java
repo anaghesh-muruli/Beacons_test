@@ -21,20 +21,14 @@ public class CarAdapter extends RecyclerView.Adapter<CarAdapter.MyViewHolder>
    // private CarAdapterListener listener;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView carVIN;
+        public TextView carVIN,carChassisNumber,carModel;
 
 
         public MyViewHolder(View itemView) {
             super(itemView);
             carVIN = (TextView)itemView.findViewById(R.id.CarVin);
-
-            /*itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    // send selected car in callback
-                    listener.onCarSelected(carListFiltered.get(getAdapterPosition()));
-                }
-            });*/
+            carChassisNumber=(TextView)itemView.findViewById(R.id.ChassisNumber);
+            carModel = (TextView)itemView.findViewById(R.id.VehicleModel);
         }
     }
 
@@ -57,6 +51,8 @@ public class CarAdapter extends RecyclerView.Adapter<CarAdapter.MyViewHolder>
     public void onBindViewHolder(MyViewHolder holder, final int position) {
         final CarData carData = carListFiltered.get(position);
         holder.carVIN.setText(carData.getcarVin());
+        holder.carChassisNumber.setText(carData.getCarChassisNumber());
+        holder.carModel.setText(carData.getCarModel());
 
     }
 
@@ -77,8 +73,6 @@ public class CarAdapter extends RecyclerView.Adapter<CarAdapter.MyViewHolder>
                     List<CarData> filteredList = new ArrayList<>();
                     for (CarData row : carList) {
 
-                        // name match condition. this might differ depending on your requirement
-                        // here we are looking for name or phone number match
                         if (String.valueOf(row.getcarVin()).toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(row);
                         }
@@ -100,7 +94,4 @@ public class CarAdapter extends RecyclerView.Adapter<CarAdapter.MyViewHolder>
         };
     }
 
-   /* public interface CarAdapterListener {
-        void onCarSelected(CarData carVin);
-    }*/
 }

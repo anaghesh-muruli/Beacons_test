@@ -471,6 +471,8 @@ public class ScanQR extends AppCompatActivity {
                         editor.putString(VIN_NUM,vin.getText().toString());
                         //vinString = vin.getText().toString();
                         editor.apply();
+                        Log.e("Scan BPID = ",BEACON_NUM);
+                        Log.e("Scan Car-VIN = ",VIN_NUM);
 //                        final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(ScanQR.this);
 //                        builder.setTitle("Checkin Successful");
 //                        //  builder.setIcon(R.mipmap.ic_launcher);
@@ -535,8 +537,8 @@ public class ScanQR extends AppCompatActivity {
                 params.put("BeconID", ""+beaconID);
                // params.put("MappingUpdatedBy", ""+11);
                 params.put("MappingCreatedBy", ""+11);
-               Log.e("CarID", ""+carID );
-               Log.e("BeconID", ""+beaconID);
+                Log.e("CarID", ""+carID );
+                Log.e("BeconID", ""+beaconID);
 
                 return params;
             }

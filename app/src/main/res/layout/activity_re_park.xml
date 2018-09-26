@@ -38,40 +38,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
 
-    <EditText
-        android:id="@+id/beaconPublicId"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="28dp"
-        android:background="@drawable/et_bcn"
-        android:ems="10"
-        android:hint="Enter Beacon number"
-        android:inputType="textPersonName"
-        android:paddingBottom="5dp"
-        android:paddingLeft="53dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/carVin" />
-
-    <ImageView
-        android:id="@+id/bcnVerify"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/beaconPublicId"
-        app:layout_constraintEnd_toEndOf="@+id/beaconPublicId"
-        app:layout_constraintHorizontal_bias="0.958"
-        app:layout_constraintStart_toStartOf="@+id/beaconPublicId"
-        app:layout_constraintTop_toTopOf="@+id/beaconPublicId"
-        app:layout_constraintVertical_bias="0.428"
-        app:srcCompat="@drawable/greentick" />
-
     <ImageView
         android:id="@+id/vinVerify"
         android:layout_width="wrap_content"
@@ -97,7 +63,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:background="@drawable/assign"
-        android:text="Re-Park"
+        android:text="CONTINUE"
         android:textColor="@color/colorPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

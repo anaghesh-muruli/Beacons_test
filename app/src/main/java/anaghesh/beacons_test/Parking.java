@@ -3,6 +3,7 @@ package anaghesh.beacons_test;
 import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -61,6 +62,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static anaghesh.beacons_test.RePark.BEACON;
+import static anaghesh.beacons_test.RePark.VIN;
 import static anaghesh.beacons_test.ScanQR.BEACON_NUM;
 import static anaghesh.beacons_test.ScanQR.VIN_NUM;
 
@@ -101,10 +104,33 @@ public class Parking extends AppCompatActivity implements OnMapReadyCallback {
         bcn_result = findViewById(R.id.bcn_res);
         ufoBeaconManager = new UFOBeaconManager(this);
         sharedPreferences = getSharedPreferences("Database", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        sharedpreferences = getSharedPreferences("Database", Context.MODE_PRIVATE);
-        vin_result.setText(sharedPreferences.getString(VIN_NUM, ""));
-        bcn_result.setText(sharedPreferences.getString(BEACON_NUM, ""));
+        Intent intent = this.getIntent();
+       Log.d("intent=",intent.getExtras().getString("From"));
+        if(intent !=null) {
+            String strdata = intent.getExtras().getString("From");
+            if(strdata.equals(null)) {
+                Toast.makeText(getApplicationContext(), "Error!", Toast.LENGTH_SHORT).show();
+            }
+              else  if (strdata.equals("RePark")) {
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    sharedpreferences = getSharedPreferences("DatabaseNew", Context.MODE_PRIVATE);
+                    String restoredText = sharedpreferences.getString("text", null);
+                    if (restoredText != null) {
+                        vin_result.setText(sharedPreferences.getString(VIN, ""));
+                        bcn_result.setText(sharedPreferences.getString(BEACON, ""));
+                    }
+
+
+                } else if (strdata.equals("Nav_home")) {
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    sharedpreferences = getSharedPreferences("Database", Context.MODE_PRIVATE);
+                    vin_result.setText(sharedPreferences.getString(VIN_NUM, ""));
+                    bcn_result.setText(sharedPreferences.getString(BEACON_NUM, ""));
+                }
+            }
+
+
+
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

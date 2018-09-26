@@ -72,7 +72,8 @@ public class Navigation_home extends AppCompatActivity
     public static SharedPreferences sharedPreferences;
     String vinNum;
     private double lat, lng;
-    private UFOBeaconManager ufoBeaconManager;
+    private UFOBeaconManager
+            ufoBeaconManager;
     LocationRequest mLocationRequest;
     GoogleApiClient mGoogleApiClient;
     static int count=0;
@@ -129,7 +130,7 @@ public class Navigation_home extends AppCompatActivity
         park.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               startActivity(new Intent(Navigation_home.this, Parking.class));
+               startActivity(new Intent(Navigation_home.this, Parking.class).putExtra("From","Nav_home"));
             }
         });
         findcar.setOnClickListener(new View.OnClickListener() {
@@ -306,6 +307,8 @@ public class Navigation_home extends AppCompatActivity
             startActivity(new Intent(getApplicationContext(),RePark.class));
         }  else if (id == R.id.carInventory) {
             startActivity(new Intent(getApplicationContext(),CarInventory.class));
+        }else if (id == R.id.beaconInventory) {
+            startActivity(new Intent(getApplicationContext(),BeaconInventory.class));
         } else if (id == R.id.report) {
             Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
                     "mailto","anagheshm@gmail.com", null));

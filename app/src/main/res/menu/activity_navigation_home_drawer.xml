@@ -13,7 +13,7 @@
             android:icon="@drawable/ic_directions_car_black_24dp"
             android:title="Car inventory" />
         <item
-            android:id="@+id/beconInventory"
+            android:id="@+id/beaconInventory"
             android:icon="@drawable/ic_beacon"
             android:title="Beacon inventory" />
     </group>

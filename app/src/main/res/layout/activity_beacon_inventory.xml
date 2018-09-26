@@ -5,7 +5,7 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".BeaconInventory">
+    tools:context=".CarInventory">
 
 
     <android.support.design.widget.AppBarLayout
@@ -14,7 +14,7 @@
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+            android:id="@+id/btoolbar"
             app:titleTextColor="#000000"
             app:title="Becon Inventory"
             android:layout_width="match_parent"
@@ -27,7 +27,7 @@
 
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/myRecyclerView"
+        android:id="@+id/mybRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#ffffff"
