@@ -17,7 +17,6 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.androidadvance.topsnackbar.TSnackbar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,6 +32,7 @@ public class FindCar extends AppCompatActivity {
     public int carVIN;
     public double lat,lng;
     String zone, MacId;
+
     public static SharedPreferences sharedpreferences;
 
 
@@ -125,7 +125,7 @@ public class FindCar extends AppCompatActivity {
                             i.putExtra("pzName",zone);
                         i.putExtra("MacId",MacId);
                         if(lat==0 || lng==0){
-                            TSnackbar.make(findViewById(android.R.id.content),"Vehicle Not parked",TSnackbar.LENGTH_LONG).show();
+
 
                         }
                         else

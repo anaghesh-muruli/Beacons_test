@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
+import android.os.RemoteException;
 import android.os.Vibrator;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -21,6 +22,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -57,17 +59,30 @@ import com.ufobeaconsdk.main.UFOBeaconManager;
 import com.ufobeaconsdk.main.UFODevice;
 import com.ufobeaconsdk.main.UFODeviceType;
 
+import org.altbeacon.beacon.Beacon;
+import org.altbeacon.beacon.BeaconConsumer;
+import org.altbeacon.beacon.BeaconManager;
+import org.altbeacon.beacon.BeaconParser;
+import org.altbeacon.beacon.Identifier;
+import org.altbeacon.beacon.RangeNotifier;
+import org.altbeacon.beacon.Region;
+
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static anaghesh.beacons_test.Parking.REQUEST_CHECK_SETTINGS;
 
 //Uses Google maps API and UFO Beacon SDK
-public class FindcarMaps extends AppCompatActivity implements OnMapReadyCallback {
-
+public class FindcarMaps extends AppCompatActivity implements OnMapReadyCallback,BeaconConsumer, RangeNotifier {
+    protected static final String TAG = "RangingActivity";
+    Region region;
+    Button button;
+    private BeaconManager mBeaconManager;
     private GoogleMap mMap;
     private ImageView navigation;
-
+    int flag = 0;
     GoogleApiClient mGoogleApiClient;
     private double lat, lng;
     private TextView zone_result, vin_result;
@@ -75,7 +90,7 @@ public class FindcarMaps extends AppCompatActivity implements OnMapReadyCallback
     LatLng latLng;
     String Macid,zone;
     FusedLocationProviderClient mFusedLocationClient;
-
+    ImageView arrive;
     LocationRequest mLocationRequest;
     Location mLastLocation;
     public static SharedPreferences sharedPreferences;
@@ -87,8 +102,14 @@ public class FindcarMaps extends AppCompatActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_findcar_maps);
         toolbarSetup();
+        arrive = findViewById(R.id.arrive);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
+        mBeaconManager = BeaconManager.getInstanceForApplication(this);
+        // In this example, we will use Eddystone protocol, so we have to define it here
+        mBeaconManager.getBeaconParsers().add(new BeaconParser().
+                setBeaconLayout(BeaconParser.EDDYSTONE_UID_LAYOUT));
+        // Binds this activity to the BeaconService
+        mBeaconManager.bind(this);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -97,7 +118,7 @@ public class FindcarMaps extends AppCompatActivity implements OnMapReadyCallback
 //        sharedPreferences = getSharedPreferences("Database", MODE_PRIVATE);
 //        SharedPreferences.Editor editor = sharedPreferences.edit();
         ufoBeaconManager = new UFOBeaconManager(this);
-        isBlutoothEnabled();
+      // isBlutoothEnabled();
 
         Intent i= getIntent();
         Bundle b = i.getExtras();
@@ -246,7 +267,7 @@ public class FindcarMaps extends AppCompatActivity implements OnMapReadyCallback
                 .title("Car parked here")
                 .icon(icon));
         mMap.getUiSettings().isZoomControlsEnabled();
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
 
 
@@ -493,5 +514,55 @@ public class FindcarMaps extends AppCompatActivity implements OnMapReadyCallback
             return accuracy;
         }
     }
+    @Override
+    public void onBeaconServiceConnect() {
+        if(flag==1)
+            mBeaconManager.unbind(this);
+        Log.e("Inside","DidRange");
+        // Encapsulates a beacon identifier of arbitrary byte length
+        ArrayList<Identifier> identifiers = new ArrayList<>();
+        region = new Region("AllBeaconsRegion", identifiers);
+        // Set null to indicate that we want to match beacons with any value
+        identifiers.add(null);
+        // Represents a criteria of fields used to match beacon
+
+        try {
+            // Tells the BeaconService to start looking for beacons that match the passed Region object
+            mBeaconManager.startRangingBeaconsInRegion(region);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        // Specifies a class that should be called each time the BeaconService gets ranging data, once per second by default
+        mBeaconManager.addRangeNotifier(this);
+    }
+    @Override
+    public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
+        Log.e("Inside","DidRange");
+        if (beacons.size() > 0) {
+            Log.e("Inside","DidRange");
+            Log.e(TAG, "Bluetooth MacId "+beacons.iterator().next().getBluetoothAddress());
+            String s1 = beacons.iterator().next().getBluetoothAddress();
+            Log.e(TAG, "Bluetooth Name "+beacons.iterator().next().getBluetoothName()+" ");
+            Log.e(TAG, "Dist "+beacons.iterator().next().getDistance()+" ");
+            Log.e(TAG, "Type "+beacons.iterator().next().getBeaconTypeCode()+" ");
+            Log.e(TAG, "Rssi "+beacons.iterator().next().getRssi()+" ");
+            Log.e(TAG, "Tx "+beacons.iterator().next().getTxPower()+" ");
+            Log.e(TAG, "Tx "+beacons.iterator().next().getServiceUuid()+" ");
+            if(s1.equalsIgnoreCase(Macid)){
+                Log.e("Connected to",""+Macid);
+                Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                vibrator.vibrate(200);
+                flag = 1;
+              arrive.setVisibility(View.VISIBLE);
+                mBeaconManager.unbind(this);
+
+            }
+        }
+
+
+
+    }
+
+
 
 }

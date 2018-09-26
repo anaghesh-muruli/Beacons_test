@@ -55,6 +55,7 @@ public class ScanQR extends AppCompatActivity {
     BarcodeDetector barcodeDetector;
     CameraSource cameraSource;
     Button assign;
+   static public  String beaconStr;
     private TextView scanInfo;
     public final static String BEACON_NUM="Beacon_num";
     public final static String VIN_NUM="vin_num";
@@ -164,6 +165,7 @@ public class ScanQR extends AppCompatActivity {
 
                         Log.e("Assign thread","Upload to database");
                         if(flag1 && flag){
+                            beaconStr = beacon.getText().toString();
                             addApi();
                         }
                     }
