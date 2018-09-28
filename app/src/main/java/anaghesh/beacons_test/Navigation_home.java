@@ -88,8 +88,7 @@ public class Navigation_home extends AppCompatActivity
     public static SharedPreferences sharedPreferences;
     String vinNum;
     private double lat, lng;
-    private UFOBeaconManager
-            ufoBeaconManager;
+    private UFOBeaconManager ufoBeaconManager;
     LocationRequest mLocationRequest;
     GoogleApiClient mGoogleApiClient;
     static int count=0;
@@ -154,7 +153,7 @@ public class Navigation_home extends AppCompatActivity
         park.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               startActivity(new Intent(Navigation_home.this, Parking.class).putExtra("From","Nav_home"));
+               startActivity(new Intent(Navigation_home.this, Parking.class));
             }
         });
         findcar.setOnClickListener(new View.OnClickListener() {
@@ -327,13 +326,16 @@ public class Navigation_home extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.rePark) {
-            startActivity(new Intent(getApplicationContext(),RePark.class));
-        }  else if (id == R.id.carInventory) {
-            startActivity(new Intent(getApplicationContext(),CarInventory.class));
-        }else if (id == R.id.beaconInventory) {
-            startActivity(new Intent(getApplicationContext(),BeaconInventory.class));
-        } else if (id == R.id.report) {
+        if (id == R.id.repark) {
+            startActivity(new Intent(Navigation_home.this, Repark.class));
+        }  else if (id == R.id.car_inventory) {
+            startActivity(new Intent(Navigation_home.this, CarInventory.class));
+
+        }
+        else if (id == R.id.beacon_inventory) {
+            startActivity(new Intent(Navigation_home.this, BeaconInventory.class));
+
+        }else if (id == R.id.report) {
             Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
                     "mailto","anagheshm@gmail.com", null));
             emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Bug report: Fulassure asset tracking Android app ");

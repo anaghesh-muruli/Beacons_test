@@ -62,9 +62,7 @@
             android:name=".Navigation_home"
             android:label="@string/title_activity_navigation_home"
             android:theme="@style/AppTheme" />
-        <activity
-            android:name=".Checkin"
-            android:parentActivityName=".Home" />
+
         <activity
             android:name=".ScanQR"
             android:parentActivityName=".Checkin" />
@@ -100,7 +98,7 @@
             android:parentActivityName=".Navigation_home"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".RePark"
+            android:name=".Repark"
             android:parentActivityName=".Navigation_home"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity

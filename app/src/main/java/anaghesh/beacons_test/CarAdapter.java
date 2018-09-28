@@ -7,8 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.ImageView;
 import android.widget.TextView;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +26,7 @@ public class CarAdapter extends RecyclerView.Adapter<CarAdapter.MyViewHolder>
 
         public MyViewHolder(View itemView) {
             super(itemView);
-            carVIN = (TextView)itemView.findViewById(R.id.CarVin);
+            carVIN = itemView.findViewById(R.id.CarVin);
             carChassisNumber=(TextView)itemView.findViewById(R.id.ChassisNumber);
             carModel = (TextView)itemView.findViewById(R.id.VehicleModel);
         }

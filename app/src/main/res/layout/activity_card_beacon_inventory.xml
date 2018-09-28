@@ -21,10 +21,21 @@
             android:layout_height="wrap_content"
             android:background="#ffffff">
 
+            <ImageView
+                android:id="@+id/car"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:paddingStart="16dp"
+                android:foregroundGravity="center_vertical"
+                android:src="@drawable/ic_beacon" />
+
             <TextView
                 android:id="@+id/BeaconPublicId"
-                android:padding="24dp"
+                android:padding="16dp"
                 android:textStyle="bold"
+                android:layout_toEndOf="@id/car"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
