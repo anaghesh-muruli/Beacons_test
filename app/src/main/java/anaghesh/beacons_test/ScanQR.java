@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.annotation.NonNull;
@@ -43,6 +44,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 // IMP: Google vision API used. Formats to be controlled
@@ -55,6 +57,7 @@ public class ScanQR extends AppCompatActivity {
     BarcodeDetector barcodeDetector;
     CameraSource cameraSource;
     Button assign;
+    Camera camera = Camera.open();
    static public  String beaconStr;
     private TextView scanInfo;
     public final static String BEACON_NUM="Beacon_num";
@@ -82,6 +85,7 @@ public class ScanQR extends AppCompatActivity {
                     }
                     try {
                         cameraSource.start(cameraPreview.getHolder());
+                        setCamFocusMode();
 
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -107,6 +111,7 @@ public class ScanQR extends AppCompatActivity {
         bcnVerify = findViewById(R.id.bcn_verify);
         vinVerify = findViewById(R.id.vin_verify);
         scanInfo = findViewById(R.id.scan_info);
+       // setCamFocusMode();
 
 
         textWatcher = new TextWatcher() {
@@ -192,6 +197,15 @@ public class ScanQR extends AppCompatActivity {
         cameraPreview.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
             public void surfaceCreated(SurfaceHolder surfaceHolder) {
+
+
+                Camera.Parameters params = camera.getParameters();
+                if (params.getSupportedFocusModes().contains(
+                        Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)) {
+                    params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
+                }
+                camera.setParameters(params);
+                setCamFocusMode();
                 if (ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                     //Request permission
                     ActivityCompat.requestPermissions(ScanQR.this,
@@ -200,6 +214,7 @@ public class ScanQR extends AppCompatActivity {
                 }
                 try {
                     cameraSource.start(cameraPreview.getHolder());
+                  //  setCamFocusMode();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -547,6 +562,23 @@ public class ScanQR extends AppCompatActivity {
         };
         Singleton.getInstance(getApplicationContext()).addToRequestQueue(rq);
     }
+    private void setCamFocusMode(){
 
+        if(null == camera) {
+            return;
+        }
+
+        /* Set Auto focus */
+        Camera.Parameters parameters = camera.getParameters();
+        List<String> focusModes = parameters.getSupportedFocusModes();
+        if(focusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)){
+            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+        } else
+        if(focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)){
+            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+        }
+
+        camera.setParameters(parameters);
+    }
  
 }

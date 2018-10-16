@@ -13,8 +13,8 @@
         <fragment
             android:id="@+id/map"
             class="com.google.android.gms.maps.SupportMapFragment"
-            android:layout_width="415dp"
-            android:layout_height="472dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             map:layout_constraintBottom_toTopOf="@+id/imageView7"
             map:layout_constraintEnd_toEndOf="parent"
             map:layout_constraintStart_toStartOf="parent"
@@ -25,7 +25,7 @@
 
         <ImageView
             android:id="@+id/imageView7"
-            android:layout_width="429dp"
+            android:layout_width="0dp"
             android:layout_height="144dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
@@ -56,13 +56,12 @@
             android:layout_width="wrap_content"
             android:layout_height="44dp"
             android:layout_marginBottom="16dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
             android:background="@drawable/confirm_park"
             android:text="confirm park"
             android:textColor="#ffffff"
             map:layout_constraintBottom_toBottomOf="parent"
             map:layout_constraintEnd_toEndOf="@+id/imageView7"
+            map:layout_constraintHorizontal_bias="0.441"
             map:layout_constraintStart_toStartOf="parent" />
 
         <TextView
@@ -76,45 +75,40 @@
             android:text="Beacon No: "
             android:textColor="#ffffff"
             android:textSize="17sp"
-            map:layout_constraintBottom_toTopOf="@+id/confirm_park"
+            map:layout_constraintBottom_toTopOf="@+id/textView2"
             map:layout_constraintEnd_toEndOf="parent"
             map:layout_constraintHorizontal_bias="0.176"
             map:layout_constraintStart_toStartOf="@+id/imageView7"
             map:layout_constraintTop_toTopOf="@+id/imageView7"
-            map:layout_constraintVertical_bias="0.098" />
+            map:layout_constraintVertical_bias="0.6" />
 
         <TextView
             android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="12dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
             android:text="VIN: "
             android:textColor="#c9c9c9"
             android:textSize="17sp"
             map:layout_constraintBottom_toTopOf="@+id/confirm_park"
             map:layout_constraintEnd_toEndOf="parent"
-            map:layout_constraintHorizontal_bias="0.136"
-            map:layout_constraintStart_toStartOf="parent"
-            map:layout_constraintTop_toBottomOf="@+id/textView5"
-            map:layout_constraintVertical_bias="0.157" />
+            map:layout_constraintHorizontal_bias="0.128"
+            map:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/bcn_res"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="12dp"
             android:text=" "
             android:textColor="#ffffff"
             android:textSize="17sp"
             map:layout_constraintEnd_toEndOf="parent"
             map:layout_constraintHorizontal_bias="0.0"
             map:layout_constraintStart_toEndOf="@+id/textView5"
-            map:layout_constraintTop_toTopOf="@+id/imageView7" />
+            tools:layout_editor_absoluteY="528dp" />
 
         <TextView
             android:id="@+id/vin_res"
@@ -122,7 +116,6 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:text=" "
             android:textColor="#c9c9c9"
@@ -131,8 +124,7 @@
             map:layout_constraintEnd_toEndOf="@+id/imageView7"
             map:layout_constraintHorizontal_bias="0.0"
             map:layout_constraintStart_toEndOf="@+id/textView2"
-            map:layout_constraintTop_toBottomOf="@+id/bcn_res"
-            map:layout_constraintVertical_bias="0.25" />
+            map:layout_constraintTop_toBottomOf="@+id/bcn_res" />
 
     </android.support.constraint.ConstraintLayout>
 </FrameLayout>
